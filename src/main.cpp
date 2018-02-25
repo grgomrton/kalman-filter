@@ -1,6 +1,13 @@
-#include <iostream>
+#include <gtkmm.h>
 
-int main() {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
+int main(int argc, char *argv[])
+{
+    auto app =
+            Gtk::Application::create(argc, argv,
+                                     "org.gtkmm.examples.base");
+
+    Gtk::Window window;
+    window.set_default_size(400, 200);
+
+    return app->run(window);
 }

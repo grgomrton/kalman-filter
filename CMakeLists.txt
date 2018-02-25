@@ -3,4 +3,7 @@ project(kalman_filter)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(kalman_filter src/main.cpp)
+find_package(PkgConfig)
+pkg_check_modules(GTKMM gtkmm-3.0)
+
+add_subdirectory(src)

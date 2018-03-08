@@ -4,7 +4,7 @@ link_directories(
 include_directories(
         ${GTKMM_INCLUDE_DIRS}  )
 
-add_executable(kalman_filter main.cpp)
+add_executable(kalman_filter main.cpp MainWindow.cpp MainWindow.h)
 
 target_link_libraries(kalman_filter
         ${GTKMM_LIBRARIES}  )

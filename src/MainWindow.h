@@ -7,7 +7,7 @@ class MainWindow : public Gtk::Window {
 public:
     MainWindow(const char* greetingText);
 
-    ~MainWindow() override;
+    virtual ~MainWindow();
 };
 
 #endif //KALMAN_FILTER_MAINWINDOW_H

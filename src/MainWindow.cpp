@@ -1,12 +1,8 @@
 #include <gtkmm/label.h>
 #include "MainWindow.h"
 
-MainWindow::MainWindow(const char* greetingText) {
-    Gtk::Label* greeting = Gtk::manage(new Gtk::Label(greetingText));
-    add(*greeting);
-    greeting->show();
-}
-
-MainWindow::~MainWindow() {
-
+MainWindow::MainWindow(const std::string& greetingText) :
+        greeting(greetingText) {
+    add(greeting);
+    greeting.show();
 }

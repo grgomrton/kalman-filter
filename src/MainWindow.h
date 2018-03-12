@@ -5,9 +5,10 @@
 
 class MainWindow : public Gtk::Window {
 public:
-    MainWindow(const char* greetingText);
+    MainWindow(const std::string& greetingText);
 
-    virtual ~MainWindow();
+private:
+    Gtk::Label greeting;
 };
 
 #endif //KALMAN_FILTER_MAINWINDOW_H

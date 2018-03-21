@@ -1,6 +1,7 @@
 #ifndef KALMAN_FILTER_MAINWINDOW_H
 #define KALMAN_FILTER_MAINWINDOW_H
 
+
 #include <gtkmm/window.h>
 
 class MainWindow : public Gtk::Window {
@@ -10,5 +11,6 @@ public:
 private:
     Gtk::Label greeting;
 };
+
 
 #endif //KALMAN_FILTER_MAINWINDOW_H

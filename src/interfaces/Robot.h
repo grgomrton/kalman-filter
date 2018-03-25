@@ -1,6 +1,4 @@
-#ifndef KALMAN_FILTER_ROBOT_H
-#define KALMAN_FILTER_ROBOT_H
-
+#pragma once
 
 #include "ILocalizer.hpp"
 #include "IMovingObjectPositionStore.hpp"
@@ -16,6 +14,3 @@ private:
     ILocalizer& localizer;
     IMovingObjectPositionStore& world;
 };
-
-
-#endif //KALMAN_FILTER_ROBOT_H

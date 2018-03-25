@@ -1,6 +1,4 @@
-#ifndef KALMAN_FILTER_WORLD_H
-#define KALMAN_FILTER_WORLD_H
-
+#pragma once
 
 #include "IMovingObjectPositionStore.hpp"
 #include <random>
@@ -15,6 +13,3 @@ private:
     double percentageToMultiplier(double percentage);
     std::default_random_engine generator;
 };
-
-
-#endif //KALMAN_FILTER_WORLD_H

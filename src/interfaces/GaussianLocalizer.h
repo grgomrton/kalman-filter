@@ -1,6 +1,4 @@
-#ifndef KALMAN_FILTER_POSITIONESTIMATOR_H
-#define KALMAN_FILTER_POSITIONESTIMATOR_H
-
+#pragma once
 
 #include "ILocalizer.hpp"
 
@@ -42,6 +40,3 @@ private:
     double percentageToMultiplier(double percentage);
     double accuracyOfMoveCommad(double distance);
 };
-
-
-#endif //KALMAN_FILTER_POSITIONESTIMATOR_H

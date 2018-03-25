@@ -26,7 +26,7 @@ TEST_CASE("The distribution does not differ on a statistically significant level
     UniformSeed seed;
     std::vector<double> values;
     int sampleSize = 1000;
-    double higherBoundForChiSquareToKeepTheNullHypothesis = 7.81473;
+    double higherBoundForChiSquareToKeepTheNullHypothesis = 9.48773;
     double cuttingPointOfFirstBucketExclusive = 0.2;
     double cuttingPointOfSecondBucketExclusive = 0.4;
     double cuttingPointOfThirdBucketExclusive = 0.6;

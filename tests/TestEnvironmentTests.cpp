@@ -32,6 +32,6 @@ TEST_CASE("FakeIt should be able to mock an interface and verify calls to it", "
     auto fooValue = i.foo(someIrrelevantParameter);
 
     Verify(Method(mock, foo)).Exactly(1);
-    //Verify(Method(mock, foo)).Exactly(2); // should display reason
+    //Verify(Method(mock, foo)).Exactly(2); // should display failure reason
     AssertThat(fooValue, Is().EqualTo(1));
 }

@@ -3,16 +3,18 @@
 
 
 #include "ILocalizer.hpp"
-#include "IRobotPositionMaintainer.hpp"
+#include "IMovingObjectPositionStore.hpp"
+#include "IMovingObject.hpp"
 
-class Robot {
+class Robot : public IMovingObject {
 public:
-    Robot(ILocalizer& localizer, IRobotPositionMaintainer& world);
+    Robot(double moveCommandAccuracyInPercentage, ILocalizer& localizer, IMovingObjectPositionStore& world);
     void move(double distanceInMetres);
-
+    double getMoveCommandAccuracyInPercentage() override;
 private:
+    double moveCommandAccuracyInPercentage;
     ILocalizer& localizer;
-    IRobotPositionMaintainer& world;
+    IMovingObjectPositionStore& world;
 };
 
 

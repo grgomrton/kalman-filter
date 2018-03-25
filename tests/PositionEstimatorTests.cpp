@@ -47,7 +47,7 @@ TEST_CASE("Initial accuracy should not be zero") {
 }
 
 
-TEST_CASE("Movement accuracy should not be negative") {
+TEST_CASE("Estimator movement accuracy should not be negative") {
     double initialPosition = 5.0;
     double initialAccuracy = 0.05;
     double accuracyOfMoveCommandInPercentage = -8.0;
@@ -56,7 +56,7 @@ TEST_CASE("Movement accuracy should not be negative") {
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("movementAccuracy"));
 }
 
-TEST_CASE("Movement accuracy should not be zero") {
+TEST_CASE("Estimator movement accuracy should not be zero") {
     double initialPosition = 5.0;
     double initialAccuracy = 0.05;
     double accuracyOfMoveCommandInPercentage = 0.0;

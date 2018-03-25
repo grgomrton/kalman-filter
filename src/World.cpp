@@ -17,7 +17,7 @@ void World::moveCommandExecuted(IMovingObject& robot, double distance) {
 
     double newPositionWithAddedNoise = distribution(generator);
 
-    robotPosition += newPositionWithAddedNoise;
+    robotPosition = newPositionWithAddedNoise;
 }
 
 double World::percentageToMultiplier(double percentage) {

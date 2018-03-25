@@ -1,7 +1,6 @@
 #include "catch2/catch.hpp"
 #include "snowhouse/snowhouse.h"
-#include "../src/PositionEstimator.h"
-// TODO add include library (?)
+#include "PositionEstimator.h"
 
 using namespace snowhouse;
 
@@ -123,29 +122,6 @@ TEST_CASE("After a measurement the accuracy should be in a smaller range") {
     AssertThat(estimationAccuracyAfterMeasurement, Is().LessThan(initialAccuracyInMetres));
 }
 
-TEST_CASE("Interesting that the certainty after measurement is independent of the distance") {
-    double initialPosition = 3.0;
-    double initialAccuracy = 0.5;
-    double measuredPositionOfCloseMeasurement = 3.3;
-    double accuracyOfCloseMeasurement = 0.5;
-    double measuredPositionOfDistantMeasurement = 5.3;
-    double accuracyOfDistantMeasurement = 0.5;
-    double accuracyOfMoveCommandInPercentage = 8.0;
-    double precision = 0.001;
-    double magnitudeOfComparisonPrecision = 0.01;
-    PositionEstimator estimatorForCloseMeasurement(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
-    PositionEstimator estimatorForDistantMeasurement(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
-
-    estimatorForCloseMeasurement.measurementReceived(measuredPositionOfCloseMeasurement, accuracyOfCloseMeasurement);
-    auto estimationAccuracyAfterCloseMeasurement = estimatorForCloseMeasurement.getEstimationAccuracy();
-    estimatorForDistantMeasurement.measurementReceived(measuredPositionOfDistantMeasurement, accuracyOfDistantMeasurement);
-    auto estimationAccuracyAfterDistantMeasurement = estimatorForDistantMeasurement.getEstimationAccuracy();
-
-    AssertThat(estimationAccuracyAfterCloseMeasurement, Is().GreaterThan(magnitudeOfComparisonPrecision));
-    AssertThat(estimationAccuracyAfterDistantMeasurement, Is().GreaterThan(magnitudeOfComparisonPrecision));
-    AssertThat(estimationAccuracyAfterCloseMeasurement, Is().EqualToWithDelta(estimationAccuracyAfterDistantMeasurement, precision));
-}
-
 // Follows Figure 3.2 (a, b, c) from
 // Thrun, S., Burgard, W.,, Fox, D. (2006). Probabilistic Robotics (Intelligent Robotics and Autonomous Agents).
 TEST_CASE("After a close measurement the accuracy should be in smaller range than both the initial and the measured one") {
@@ -190,4 +166,27 @@ TEST_CASE("After a measurement the move should introduce uncertainty") {
 
     AssertThat(estimatedPosition, Is().EqualToWithDelta(expectedMean, precisionForPosition));
     AssertThat(estimationAccuracy, Is().EqualToWithDelta(expectedAccuracy, precisionForAccuracy));
+}
+
+TEST_CASE("The certainty after measurement update is independent of the distance") {
+    double initialPosition = 3.0;
+    double initialAccuracy = 0.5;
+    double measuredPositionOfCloseMeasurement = 3.3;
+    double accuracyOfCloseMeasurement = 0.5;
+    double measuredPositionOfDistantMeasurement = 5.3;
+    double accuracyOfDistantMeasurement = 0.5;
+    double accuracyOfMoveCommandInPercentage = 8.0;
+    double precision = 0.001;
+    double magnitudeOfComparisonPrecision = 0.01;
+    PositionEstimator estimatorForCloseMeasurement(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
+    PositionEstimator estimatorForDistantMeasurement(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
+
+    estimatorForCloseMeasurement.measurementReceived(measuredPositionOfCloseMeasurement, accuracyOfCloseMeasurement);
+    auto estimationAccuracyAfterCloseMeasurement = estimatorForCloseMeasurement.getEstimationAccuracy();
+    estimatorForDistantMeasurement.measurementReceived(measuredPositionOfDistantMeasurement, accuracyOfDistantMeasurement);
+    auto estimationAccuracyAfterDistantMeasurement = estimatorForDistantMeasurement.getEstimationAccuracy();
+
+    AssertThat(estimationAccuracyAfterCloseMeasurement, Is().GreaterThan(magnitudeOfComparisonPrecision));
+    AssertThat(estimationAccuracyAfterDistantMeasurement, Is().GreaterThan(magnitudeOfComparisonPrecision));
+    AssertThat(estimationAccuracyAfterCloseMeasurement, Is().EqualToWithDelta(estimationAccuracyAfterDistantMeasurement, precision));
 }

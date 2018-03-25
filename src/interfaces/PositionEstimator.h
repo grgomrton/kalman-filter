@@ -2,11 +2,13 @@
 #define KALMAN_FILTER_POSITIONESTIMATOR_H
 
 
+#include "ILocalizer.hpp"
+
 ///
 /// A one-dimensional Kalman filter which can be used to maintain a gaussian estimation
 /// of the current robot position incorporating move commands and measurements.
 ///
-class PositionEstimator {
+class PositionEstimator : public ILocalizer {
 public:
     /// Initializes a new instance of a PositionEstimator which can be used to
     /// maintain a gaussian estimation of the current robot position incorporating
@@ -27,8 +29,8 @@ public:
     PositionEstimator(double initialPosition, double initialAccuracy, double movementAccuracyInPercentage);
     // TODO comments
     // TODO errorRange instead of accuracy?
-    void moveCommandExecuted(double distance);
-    void measurementReceived(double measuredPosition, double measurementAccuracy);
+    void moveCommandExecuted(double distance) override;
+    void measurementReceived(double measuredPosition, double measurementAccuracy) override;
     double getEstimatedPosition();
     double getEstimationAccuracy();
 private:

@@ -1,6 +1,6 @@
 #include "catch2/catch.hpp"
 #include "snowhouse/snowhouse.h"
-#include "../src/UniformSeed.h" // TODO add include library (?)
+#include "UniformSeed.h"
 
 using namespace snowhouse;
 

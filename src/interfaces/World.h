@@ -2,8 +2,8 @@
 #define KALMAN_FILTER_WORLD_H
 
 
-// TODO why do i have to add this here?
 #include "IMovingObjectPositionStore.hpp"
+#include <random>
 
 class World : public IMovingObjectPositionStore {
 public:
@@ -12,6 +12,8 @@ public:
     void moveCommandExecuted(IMovingObject& robot, double distance) override;
 private:
     double robotPosition;
+    double percentageToMultiplier(double percentage);
+    std::default_random_engine generator;
 };
 
 

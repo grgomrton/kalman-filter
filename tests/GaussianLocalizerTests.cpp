@@ -1,6 +1,6 @@
 #include "catch2/catch.hpp"
 #include "snowhouse/snowhouse.h"
-#include "PositionEstimator.h"
+#include "GaussianLocalizer.h"
 
 using namespace snowhouse;
 
@@ -10,8 +10,8 @@ TEST_CASE("After initialization the estimated position should be identical with 
     double accuracyOfMoveCommandInPercentage = 8.0;
     double precision = 0.001;
 
-    PositionEstimator estimator(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
-    auto estimatedPosition = estimator.getEstimatedPosition();
+    GaussianLocalizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    auto estimatedPosition = localizer.getEstimatedPosition();
 
     AssertThat(estimatedPosition, Is().EqualToWithDelta(initialPositionInMetres, precision));
 }
@@ -22,8 +22,8 @@ TEST_CASE("After initialization the estimated accuracy should be identical with 
     double accuracyOfMoveCommandInPercentage = 8.0;
     double precision = 0.001;
 
-    PositionEstimator estimator(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
-    auto estimatedAccuracy = estimator.getEstimationAccuracy();
+    GaussianLocalizer localizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
+    auto estimatedAccuracy = localizer.getEstimationAccuracy();
 
     AssertThat(estimatedAccuracy, Is().EqualToWithDelta(initialAccuracy, precision));
 }
@@ -33,7 +33,7 @@ TEST_CASE("Initial accuracy should not be negative") {
     double initialAccuracy = -0.05;
     double accuracyOfMoveCommandInPercentage = 8.0;
 
-    AssertThrows(std::invalid_argument, PositionEstimator(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
+    AssertThrows(std::invalid_argument, GaussianLocalizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("initialAccuracy"));
 }
 
@@ -42,7 +42,7 @@ TEST_CASE("Initial accuracy should not be zero") {
     double initialAccuracy = 0.0;
     double accuracyOfMoveCommandInPercentage = 8.0;
 
-    AssertThrows(std::invalid_argument, PositionEstimator(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
+    AssertThrows(std::invalid_argument, GaussianLocalizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("initialAccuracy"));
 }
 
@@ -52,7 +52,7 @@ TEST_CASE("Estimator movement accuracy should not be negative") {
     double initialAccuracy = 0.05;
     double accuracyOfMoveCommandInPercentage = -8.0;
 
-    AssertThrows(std::invalid_argument, PositionEstimator(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
+    AssertThrows(std::invalid_argument, GaussianLocalizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("movementAccuracy"));
 }
 
@@ -61,7 +61,7 @@ TEST_CASE("Estimator movement accuracy should not be zero") {
     double initialAccuracy = 0.05;
     double accuracyOfMoveCommandInPercentage = 0.0;
 
-    AssertThrows(std::invalid_argument, PositionEstimator(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
+    AssertThrows(std::invalid_argument, GaussianLocalizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("movementAccuracy"));
 }
 
@@ -72,10 +72,10 @@ TEST_CASE("After a movement the mean should move to the endpoint of the command"
     double accuracyOfMoveCommandInPercentage = 8.0;
     double expectedPositionAfterMove = 6.0;
     double precision = 0.001;
-    PositionEstimator estimator(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    GaussianLocalizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
-    estimator.moveCommandExecuted(distanceInMetres);
-    auto estimatedPosition = estimator.getEstimatedPosition();
+    localizer.moveCommandExecuted(distanceInMetres);
+    auto estimatedPosition = localizer.getEstimatedPosition();
 
     AssertThat(estimatedPosition, Is().EqualToWithDelta(expectedPositionAfterMove, precision));
 }
@@ -86,10 +86,10 @@ TEST_CASE("After a movement the accuracy should be in a higher range") {
     double initialAccuracyInMetres = 0.05;
     double distanceInMetres = 1.0;
     double accuracyOfMoveCommandInPercentage = 8.0;
-    PositionEstimator estimator(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    GaussianLocalizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
-    estimator.moveCommandExecuted(distanceInMetres);
-    auto estimationAccuracy = estimator.getEstimationAccuracy();
+    localizer.moveCommandExecuted(distanceInMetres);
+    auto estimationAccuracy = localizer.getEstimationAccuracy();
 
     AssertThat(estimationAccuracy, Is().GreaterThan(initialAccuracyInMetres));
 }
@@ -100,10 +100,10 @@ TEST_CASE("After a measurement the mean should move in between the original and 
     double measuredPositionInMetres = 3.3;
     double accuracyOfMeasurementInMetres = 0.5;
     double accuracyOfMoveCommandInPercentage = 8.0;
-    PositionEstimator estimator(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    GaussianLocalizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
-    estimator.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
-    auto estimatedPosition = estimator.getEstimatedPosition();
+    localizer.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
+    auto estimatedPosition = localizer.getEstimatedPosition();
 
     AssertThat(estimatedPosition, Is().GreaterThan(initialPositionInMetres).And().LessThan(measuredPositionInMetres));
 }
@@ -114,17 +114,17 @@ TEST_CASE("After a measurement the accuracy should be in a smaller range") {
     double measuredPositionInMetres = 3.3;
     double accuracyOfMeasurementInMetres = 0.5;
     double accuracyOfMoveCommandInPercentage = 8.0;
-    PositionEstimator estimator(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    GaussianLocalizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
-    estimator.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
-    auto estimationAccuracyAfterMeasurement = estimator.getEstimationAccuracy();
+    localizer.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
+    auto estimationAccuracyAfterMeasurement = localizer.getEstimationAccuracy();
 
     AssertThat(estimationAccuracyAfterMeasurement, Is().LessThan(initialAccuracyInMetres));
 }
 
-// Follows Figure 3.2 (a, b, c) from
-// Thrun, S., Burgard, W.,, Fox, D. (2006). Probabilistic Robotics (Intelligent Robotics and Autonomous Agents).
 TEST_CASE("After a close measurement the accuracy should be in smaller range than both the initial and the measured one") {
+    // Follows Figure 3.2 (a, b, c) from
+    // Thrun, S., Burgard, W.,, Fox, D. (2006). Probabilistic Robotics (Intelligent Robotics and Autonomous Agents).
     double initialPositionInMetres = 8.0;
     double initialAccuracyInMetres = 8.0;
     double measuredPositionInMetres = 6.0;
@@ -134,19 +134,19 @@ TEST_CASE("After a close measurement the accuracy should be in smaller range tha
     double expectedAccuracy = 3.6;
     double precisionForPosition = 0.1;
     double precisionForAccuracy = 0.05;
-    PositionEstimator estimator(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    GaussianLocalizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
-    estimator.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
-    auto estimatedPosition = estimator.getEstimatedPosition();
-    auto estimationAccuracy = estimator.getEstimationAccuracy();
+    localizer.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
+    auto estimatedPosition = localizer.getEstimatedPosition();
+    auto estimationAccuracy = localizer.getEstimationAccuracy();
 
     AssertThat(estimatedPosition, Is().EqualToWithDelta(expectedMean, precisionForPosition));
     AssertThat(estimationAccuracy, Is().EqualToWithDelta(expectedAccuracy, precisionForAccuracy));
 }
 
-// Follows Figure 3.2 (c, d) from
-// Thrun, S., Burgard, W.,, Fox, D. (2006). Probabilistic Robotics (Intelligent Robotics and Autonomous Agents).
-TEST_CASE("After a measurement the move should introduce uncertainty") {
+TEST_CASE("After a measurement the move command should introduce uncertainty") {
+    // Follows Figure 3.2 (c, d) from
+    // Thrun, S., Burgard, W.,, Fox, D. (2006). Probabilistic Robotics (Intelligent Robotics and Autonomous Agents).
     double initialPositionInMetres = 8.0;
     double initialAccuracyInMetres = 8.0;
     double measuredPositionInMetres = 6.0;
@@ -157,12 +157,12 @@ TEST_CASE("After a measurement the move should introduce uncertainty") {
     double expectedAccuracy = 7.0;
     double precisionForPosition = 0.1;
     double precisionForAccuracy = 0.05;
-    PositionEstimator estimator(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    GaussianLocalizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
-    estimator.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
-    estimator.moveCommandExecuted(distanceInMetres);
-    auto estimatedPosition = estimator.getEstimatedPosition();
-    auto estimationAccuracy = estimator.getEstimationAccuracy();
+    localizer.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
+    localizer.moveCommandExecuted(distanceInMetres);
+    auto estimatedPosition = localizer.getEstimatedPosition();
+    auto estimationAccuracy = localizer.getEstimationAccuracy();
 
     AssertThat(estimatedPosition, Is().EqualToWithDelta(expectedMean, precisionForPosition));
     AssertThat(estimationAccuracy, Is().EqualToWithDelta(expectedAccuracy, precisionForAccuracy));
@@ -178,13 +178,13 @@ TEST_CASE("The certainty after measurement update is independent of the distance
     double accuracyOfMoveCommandInPercentage = 8.0;
     double precision = 0.001;
     double magnitudeOfComparisonPrecision = 0.01;
-    PositionEstimator estimatorForCloseMeasurement(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
-    PositionEstimator estimatorForDistantMeasurement(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
+    GaussianLocalizer localizerForCloseMeasurement(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
+    GaussianLocalizer localizerForDistantMeasurement(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
 
-    estimatorForCloseMeasurement.measurementReceived(measuredPositionOfCloseMeasurement, accuracyOfCloseMeasurement);
-    auto estimationAccuracyAfterCloseMeasurement = estimatorForCloseMeasurement.getEstimationAccuracy();
-    estimatorForDistantMeasurement.measurementReceived(measuredPositionOfDistantMeasurement, accuracyOfDistantMeasurement);
-    auto estimationAccuracyAfterDistantMeasurement = estimatorForDistantMeasurement.getEstimationAccuracy();
+    localizerForCloseMeasurement.measurementReceived(measuredPositionOfCloseMeasurement, accuracyOfCloseMeasurement);
+    auto estimationAccuracyAfterCloseMeasurement = localizerForCloseMeasurement.getEstimationAccuracy();
+    localizerForDistantMeasurement.measurementReceived(measuredPositionOfDistantMeasurement, accuracyOfDistantMeasurement);
+    auto estimationAccuracyAfterDistantMeasurement = localizerForDistantMeasurement.getEstimationAccuracy();
 
     AssertThat(estimationAccuracyAfterCloseMeasurement, Is().GreaterThan(magnitudeOfComparisonPrecision));
     AssertThat(estimationAccuracyAfterDistantMeasurement, Is().GreaterThan(magnitudeOfComparisonPrecision));

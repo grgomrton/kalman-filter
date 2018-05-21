@@ -1,5 +1,7 @@
 #include <stdexcept>
-#include "headers/Robot.h"
+#include "ILocalizer.h"
+#include "IMovingObjectPositionStore.h"
+#include "Robot.h"
 
 Robot::Robot(double moveCommandAccuracyInPercentage, ILocalizer& localizer, IMovingObjectPositionStore& world) :
         moveCommandAccuracyInPercentage(moveCommandAccuracyInPercentage),

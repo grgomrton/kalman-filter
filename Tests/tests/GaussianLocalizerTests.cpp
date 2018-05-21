@@ -1,4 +1,4 @@
-#include <GaussianLocalizer.h>
+#include "GaussianLocalizer.h"
 #include "catch2/catch.hpp"
 #include "snowhouse/snowhouse.h"
 

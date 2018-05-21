@@ -1,4 +1,4 @@
-#include "headers/GaussianNoiseProvider.h"
+#include "GaussianNoiseProvider.h"
 
 GaussianNoiseProvider::GaussianNoiseProvider() :
         generator(std::random_device()())

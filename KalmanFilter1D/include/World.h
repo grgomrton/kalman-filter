@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../interfaces/IMovingObjectPositionStore.h"
+#include "IMovingObjectPositionStore.h"
 
 class World : public IMovingObjectPositionStore {
 public:

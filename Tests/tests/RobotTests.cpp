@@ -1,5 +1,5 @@
 #include "ILocalizer.h"
-#include "IMovingObjectPositionStore.h"
+#include "IMovingObjectContainer.h"
 #include "Robot.h"
 #include "catch2/catch.hpp"
 #include "snowhouse/snowhouse.h"
@@ -11,7 +11,7 @@ using namespace fakeit;
 TEST_CASE("Robot should notify localizer about an executed move command") {
     Mock<ILocalizer> localizer;
     When(Method(localizer, moveCommandExecuted)).AlwaysReturn();
-    Mock<IMovingObjectPositionStore> world;
+    Mock<IMovingObjectContainer> world;
     When(Method(world, moveCommandExecuted)).AlwaysReturn();
     double moveAccuracy = 10.0;
     Robot robot(moveAccuracy, localizer.get(), world.get());
@@ -25,7 +25,7 @@ TEST_CASE("Robot should notify localizer about an executed move command") {
 TEST_CASE("Robot should notify world about an executed move command") {
     Mock<ILocalizer> localizer;
     When(Method(localizer, moveCommandExecuted)).AlwaysReturn();
-    Mock<IMovingObjectPositionStore> world;
+    Mock<IMovingObjectContainer> world;
     When(Method(world, moveCommandExecuted)).AlwaysReturn();
     double moveAccuracy = 10.0;
     double precision = 0.001;
@@ -42,7 +42,7 @@ TEST_CASE("Robot should notify world about an executed move command") {
 
 TEST_CASE("Robot movement accuracy should not be negative") {
     Mock<ILocalizer> localizer;
-    Mock<IMovingObjectPositionStore> world;
+    Mock<IMovingObjectContainer> world;
     double moveAccuracy = -8.0;
 
     AssertThrows(std::invalid_argument, Robot(moveAccuracy, localizer.get(), world.get()));
@@ -51,7 +51,7 @@ TEST_CASE("Robot movement accuracy should not be negative") {
 
 TEST_CASE("Robot movement accuracy should not be zero") {
     Mock<ILocalizer> localizer;
-    Mock<IMovingObjectPositionStore> world;
+    Mock<IMovingObjectContainer> world;
     double moveAccuracy = 0.0;
 
     AssertThrows(std::invalid_argument, Robot(moveAccuracy, localizer.get(), world.get()));
@@ -60,7 +60,7 @@ TEST_CASE("Robot movement accuracy should not be zero") {
 
 TEST_CASE("Robot should return the specified move accuracy") {
     Mock<ILocalizer> localizer;
-    Mock<IMovingObjectPositionStore> world;
+    Mock<IMovingObjectContainer> world;
     double moveAccuracy = 8.0;
     double precision = 0.001;
     Robot robot(moveAccuracy, localizer.get(), world.get());

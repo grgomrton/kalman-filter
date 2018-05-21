@@ -1,4 +1,4 @@
-#include "GaussianNoiseProvider.h"
+#include "NoiseGenerator.h"
 #include "catch2/catch.hpp"
 #include "snowhouse/snowhouse.h"
 
@@ -19,7 +19,7 @@ TEST_CASE("Gaussian noise generator should have a mean at zero and should follow
     auto itemIsInOneStandardDeviationBelowMean = [=](double item){ return (item >= expectedMean - standardDeviation) && (item < expectedMean); };
     auto itemIsInOneStandardDeviationAboveMean = [=](double item){ return (item >= expectedMean) && (item < expectedMean + standardDeviation); };
     auto itemIsAboveOneStandardDeviationAboveMean = [=](double item){ return item >= expectedMean + standardDeviation; };
-    GaussianNoiseProvider noiseGenerator;
+    NoiseGenerator noiseGenerator;
 
     for (int i=0; i<sampleSize; i++) {
         values.push_back(noiseGenerator.getNoise(standardDeviation));

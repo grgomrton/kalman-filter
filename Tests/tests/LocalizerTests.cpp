@@ -1,4 +1,4 @@
-#include "GaussianLocalizer.h"
+#include "Localizer.h"
 #include "catch2/catch.hpp"
 #include "snowhouse/snowhouse.h"
 
@@ -10,7 +10,7 @@ TEST_CASE("After initialization the estimated position should be identical with 
     double accuracyOfMoveCommandInPercentage = 8.0;
     double precision = 0.001;
 
-    GaussianLocalizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
     auto estimatedPosition = localizer.getEstimatedPosition();
 
     AssertThat(estimatedPosition, Is().EqualToWithDelta(initialPositionInMetres, precision));
@@ -22,7 +22,7 @@ TEST_CASE("After initialization the estimated accuracy should be identical with 
     double accuracyOfMoveCommandInPercentage = 8.0;
     double precision = 0.001;
 
-    GaussianLocalizer localizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
+    Localizer localizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
     auto estimatedAccuracy = localizer.getEstimationAccuracy();
 
     AssertThat(estimatedAccuracy, Is().EqualToWithDelta(initialAccuracy, precision));
@@ -33,7 +33,7 @@ TEST_CASE("Initial accuracy should not be negative") {
     double initialAccuracy = -0.05;
     double accuracyOfMoveCommandInPercentage = 8.0;
 
-    AssertThrows(std::invalid_argument, GaussianLocalizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
+    AssertThrows(std::invalid_argument, Localizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("initialAccuracy"));
 }
 
@@ -42,7 +42,7 @@ TEST_CASE("Initial accuracy should not be zero") {
     double initialAccuracy = 0.0;
     double accuracyOfMoveCommandInPercentage = 8.0;
 
-    AssertThrows(std::invalid_argument, GaussianLocalizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
+    AssertThrows(std::invalid_argument, Localizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("initialAccuracy"));
 }
 
@@ -52,7 +52,7 @@ TEST_CASE("Estimator movement accuracy should not be negative") {
     double initialAccuracy = 0.05;
     double accuracyOfMoveCommandInPercentage = -8.0;
 
-    AssertThrows(std::invalid_argument, GaussianLocalizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
+    AssertThrows(std::invalid_argument, Localizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("movementAccuracy"));
 }
 
@@ -61,7 +61,7 @@ TEST_CASE("Estimator movement accuracy should not be zero") {
     double initialAccuracy = 0.05;
     double accuracyOfMoveCommandInPercentage = 0.0;
 
-    AssertThrows(std::invalid_argument, GaussianLocalizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
+    AssertThrows(std::invalid_argument, Localizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("movementAccuracy"));
 }
 
@@ -72,7 +72,7 @@ TEST_CASE("After a movement the mean should move to the endpoint of the command"
     double accuracyOfMoveCommandInPercentage = 8.0;
     double expectedPositionAfterMove = 6.0;
     double precision = 0.001;
-    GaussianLocalizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
     localizer.moveCommandExecuted(distanceInMetres);
     auto estimatedPosition = localizer.getEstimatedPosition();
@@ -86,7 +86,7 @@ TEST_CASE("After a movement the accuracy should be in a higher range") {
     double initialAccuracyInMetres = 0.05;
     double distanceInMetres = 1.0;
     double accuracyOfMoveCommandInPercentage = 8.0;
-    GaussianLocalizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
     localizer.moveCommandExecuted(distanceInMetres);
     auto estimationAccuracy = localizer.getEstimationAccuracy();
@@ -100,7 +100,7 @@ TEST_CASE("After a measurement the mean should move in between the original and 
     double measuredPositionInMetres = 3.3;
     double accuracyOfMeasurementInMetres = 0.5;
     double accuracyOfMoveCommandInPercentage = 8.0;
-    GaussianLocalizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
     localizer.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
     auto estimatedPosition = localizer.getEstimatedPosition();
@@ -114,7 +114,7 @@ TEST_CASE("After a measurement the accuracy should be in a smaller range") {
     double measuredPositionInMetres = 3.3;
     double accuracyOfMeasurementInMetres = 0.5;
     double accuracyOfMoveCommandInPercentage = 8.0;
-    GaussianLocalizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
     localizer.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
     auto estimationAccuracyAfterMeasurement = localizer.getEstimationAccuracy();
@@ -134,7 +134,7 @@ TEST_CASE("After a close measurement the accuracy should be in smaller range tha
     double expectedAccuracy = 3.6;
     double precisionForPosition = 0.1;
     double precisionForAccuracy = 0.05;
-    GaussianLocalizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
     localizer.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
     auto estimatedPosition = localizer.getEstimatedPosition();
@@ -157,7 +157,7 @@ TEST_CASE("After a measurement the move command should introduce uncertainty") {
     double expectedAccuracy = 7.0;
     double precisionForPosition = 0.1;
     double precisionForAccuracy = 0.05;
-    GaussianLocalizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
     localizer.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
     localizer.moveCommandExecuted(distanceInMetres);
@@ -178,8 +178,8 @@ TEST_CASE("The certainty after measurement update is independent of the distance
     double accuracyOfMoveCommandInPercentage = 8.0;
     double precision = 0.001;
     double magnitudeOfComparisonPrecision = 0.01;
-    GaussianLocalizer localizerForCloseMeasurement(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
-    GaussianLocalizer localizerForDistantMeasurement(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
+    Localizer localizerForCloseMeasurement(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
+    Localizer localizerForDistantMeasurement(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
 
     localizerForCloseMeasurement.measurementReceived(measuredPositionOfCloseMeasurement, accuracyOfCloseMeasurement);
     auto estimationAccuracyAfterCloseMeasurement = localizerForCloseMeasurement.getEstimationAccuracy();

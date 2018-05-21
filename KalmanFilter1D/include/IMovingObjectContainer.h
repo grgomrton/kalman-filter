@@ -2,8 +2,8 @@
 
 #include "IMovingObject.h"
 
-class IMovingObjectPositionStore {
+class IMovingObjectContainer {
 public:
     virtual void moveCommandExecuted(IMovingObject& robot, double distance) = 0;
-    virtual ~IMovingObjectPositionStore() = default;
+    virtual ~IMovingObjectContainer() = default;
 };

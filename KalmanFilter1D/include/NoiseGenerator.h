@@ -1,11 +1,11 @@
 #pragma once
 
 #include <random>
-#include "IGaussianNoiseProvider.h"
+#include "IGaussianNoiseGenerator.h"
 
-class GaussianNoiseProvider : public IGaussianNoiseProvider {
+class NoiseGenerator : public IGaussianNoiseGenerator {
 public:
-    GaussianNoiseProvider();
+    NoiseGenerator();
     double getNoise(double standardDeviation) override;
 private:
     std::default_random_engine generator;

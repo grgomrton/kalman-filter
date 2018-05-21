@@ -1,9 +1,8 @@
 #include <stdexcept>
 #include <cmath>
-#include "GaussianLocalizer.h"
+#include "Localizer.h"
 
-GaussianLocalizer::GaussianLocalizer(double initialPosition, double initialAccuracy, double movementAccuracyInPercentage) :
-    // TODO field initialization here and assert in the body?
+Localizer::Localizer(double initialPosition, double initialAccuracy, double movementAccuracyInPercentage) :
     currentPosition(initialPosition),
     currentCovariance(accuracyToCovariance(initialAccuracy)),
     distanceMultiplier(percentageToMultiplier(movementAccuracyInPercentage))
@@ -16,15 +15,15 @@ GaussianLocalizer::GaussianLocalizer(double initialPosition, double initialAccur
     }
 }
 
-double GaussianLocalizer::getEstimatedPosition() {
+double Localizer::getEstimatedPosition() {
     return currentPosition;
 }
 
-double GaussianLocalizer::getEstimationAccuracy() {
+double Localizer::getEstimationAccuracy() {
     return covarianceToAccuracy(currentCovariance);
 }
 
-void GaussianLocalizer::moveCommandExecuted(double distance) {
+void Localizer::moveCommandExecuted(double distance) {
     double covarianceOfExecutionError = accuracyToCovariance(accuracyOfMoveCommad(distance));
     double meanAfterMove = currentPosition + distance;
     double covarianceAfterMove = currentCovariance + covarianceOfExecutionError;
@@ -33,7 +32,7 @@ void GaussianLocalizer::moveCommandExecuted(double distance) {
     currentCovariance = covarianceAfterMove;
 }
 
-void GaussianLocalizer::measurementReceived(double measuredPosition, double measurementAccuracy) {
+void Localizer::measurementReceived(double measuredPosition, double measurementAccuracy) {
     double covarianceOfMeasurementError = accuracyToCovariance(measurementAccuracy);
     double gain = currentCovariance / (currentCovariance + covarianceOfMeasurementError);
     double meanAfterMeasurement = currentPosition + gain * (measuredPosition - currentPosition);
@@ -43,19 +42,19 @@ void GaussianLocalizer::measurementReceived(double measuredPosition, double meas
     currentCovariance = covarianceAfterMeasurement;
 }
 
-double GaussianLocalizer::accuracyToCovariance(double accuracy) {
+double Localizer::accuracyToCovariance(double accuracy) {
     auto standardDeviation = accuracy / 2.0;
     return pow(standardDeviation, 2.0);
 }
 
-double GaussianLocalizer::covarianceToAccuracy(double covariance) {
+double Localizer::covarianceToAccuracy(double covariance) {
     return sqrt(covariance) * 2.0;
 }
 
-double GaussianLocalizer::percentageToMultiplier(double percentage) {
+double Localizer::percentageToMultiplier(double percentage) {
     return percentage / 100.0;
 }
 
-double GaussianLocalizer::accuracyOfMoveCommad(double distance) {
+double Localizer::accuracyOfMoveCommad(double distance) {
     return distance * distanceMultiplier;
 }

@@ -1,7 +1,7 @@
-#include "IGaussianNoiseProvider.h"
+#include "IGaussianNoiseGenerator.h"
 #include "World.h"
 
-World::World(double robotPosition, IGaussianNoiseProvider& noiseGenerator) :
+World::World(double robotPosition, IGaussianNoiseGenerator& noiseGenerator) :
         robotPosition(robotPosition),
         noiseGenerator(noiseGenerator)
 {

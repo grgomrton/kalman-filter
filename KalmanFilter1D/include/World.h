@@ -1,14 +1,14 @@
 #pragma once
 
-#include "IMovingObjectPositionStore.h"
+#include "IMovingObjectContainer.h"
 
-class World : public IMovingObjectPositionStore {
+class World : public IMovingObjectContainer {
 public:
-    World(double robotPosition, IGaussianNoiseProvider& noiseGenerator);
+    World(double robotPosition, IGaussianNoiseGenerator& noiseGenerator);
     double getRealRobotPosition();
     void moveCommandExecuted(IMovingObject& robot, double distance) override;
 private:
-    IGaussianNoiseProvider& noiseGenerator;
+    IGaussianNoiseGenerator& noiseGenerator;
     double robotPosition;
     double percentageToMultiplier(double percentage);
 };

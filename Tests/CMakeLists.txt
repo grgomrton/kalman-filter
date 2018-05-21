@@ -1,10 +1,10 @@
 add_executable(Tests
         tests/Init.cpp
         tests/TestEnvironmentTests.cpp
-        tests/GaussianLocalizerTests.cpp
+        tests/LocalizerTests.cpp
         tests/RobotTests.cpp
         tests/WorldTests.cpp
-        tests/GaussianNoiseProviderTests.cpp)
+        tests/NoiseGeneratorTests.cpp)
 
 target_include_directories(Tests PRIVATE include)
 

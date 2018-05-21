@@ -1,7 +1,6 @@
 #include <GaussianNoiseProvider.h>
 #include "catch2/catch.hpp"
 #include "snowhouse/snowhouse.h"
-#include "GaussianLocalizer.h"
 
 using namespace snowhouse;
 

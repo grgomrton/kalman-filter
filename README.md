@@ -6,4 +6,4 @@ You will need the _gtkmm_ library in order to build. On linux try this:
 
 `sudo apt install libgtkmm-3.0-dev`
 
-If it does not work, check out the _Installation_ section of the official gtkmm documentation.
+If it does not work, check out the _Installation_ section of the gtkmm documentation.

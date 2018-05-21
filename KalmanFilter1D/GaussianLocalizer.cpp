@@ -1,6 +1,6 @@
 #include <stdexcept>
 #include <cmath>
-#include "GaussianLocalizer.h"
+#include "headers/GaussianLocalizer.h"
 
 GaussianLocalizer::GaussianLocalizer(double initialPosition, double initialAccuracy, double movementAccuracyInPercentage) :
     // TODO field initialization here and assert in the body?

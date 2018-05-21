@@ -1,7 +1,9 @@
+#include <ILocalizer.h>
+#include <IMovingObjectPositionStore.h>
+#include <Robot.h>
 #include "catch2/catch.hpp"
 #include "snowhouse/snowhouse.h"
 #include "fakeit/standalone/fakeit.hpp"
-#include "Robot.h"
 
 using namespace snowhouse;
 using namespace fakeit;

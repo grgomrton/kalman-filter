@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ILocalizer.hpp"
+#include "ILocalizer.h"
 
 ///
 /// A one-dimensional Kalman filter which can be used to maintain a gaussian estimation

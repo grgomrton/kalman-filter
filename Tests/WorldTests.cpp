@@ -1,9 +1,8 @@
 #include <IGaussianNoiseProvider.h>
-#include <GaussianNoiseProvider.h>
+#include <World.h>
 #include "catch2/catch.hpp"
 #include "snowhouse/snowhouse.h"
 #include "fakeit/standalone/fakeit.hpp"
-#include "World.h"
 
 using namespace snowhouse;
 using namespace fakeit;

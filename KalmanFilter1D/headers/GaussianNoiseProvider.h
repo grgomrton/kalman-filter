@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IGaussianNoiseProvider.h"
+#include "../interfaces/IGaussianNoiseProvider.h"
 #include <random>
 
 class GaussianNoiseProvider : public IGaussianNoiseProvider {

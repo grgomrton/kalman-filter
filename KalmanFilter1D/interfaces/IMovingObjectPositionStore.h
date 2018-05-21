@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IMovingObject.hpp"
+#include "IMovingObject.h"
 
 class IMovingObjectPositionStore {
 public:

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ILocalizer.hpp"
-#include "IMovingObjectPositionStore.hpp"
-#include "IMovingObject.hpp"
+#include "ILocalizer.h"
+#include "../interfaces/IMovingObjectPositionStore.h"
+#include "../interfaces/IMovingObject.h"
 
 class Robot : public IMovingObject {
 public:

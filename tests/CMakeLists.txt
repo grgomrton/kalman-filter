@@ -1,5 +1,12 @@
-project(kalman_filter_tests)
+add_executable(Tests
+        Init.cpp
+        TestEnvironmentTests.cpp
+        GaussianLocalizerTests.cpp
+        RobotTests.cpp
+        WorldTests.cpp
+        GaussianNoiseProviderTests.cpp)
 
-include_directories(include ../src/interfaces)
+target_include_directories(Tests PRIVATE include)
 
-add_executable(kalman_filter_tests Init.cpp TestEnvironmentTests.cpp GaussianLocalizerTests.cpp ../src/GaussianLocalizer.cpp RobotTests.cpp ../src/Robot.cpp WorldTests.cpp ../src/World.cpp) # todo better linking to implementations?
+target_link_libraries(Tests KalmanFilter1D)
+

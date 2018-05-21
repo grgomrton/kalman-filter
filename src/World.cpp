@@ -1,8 +1,9 @@
+#include <IGaussianNoiseProvider.h>
 #include "World.h"
 
-World::World(double robotPosition) :
+World::World(double robotPosition, IGaussianNoiseProvider& noiseGenerator) :
         robotPosition(robotPosition),
-        generator(std::random_device()())
+        noiseGenerator(noiseGenerator)
 {
 }
 
@@ -11,13 +12,9 @@ double World::getRealRobotPosition() {
 }
 
 void World::moveCommandExecuted(IMovingObject& robot, double distance) {
-    double meanAfterExecution = robotPosition + distance;
     double standardDeviation = distance * percentageToMultiplier(robot.getMoveCommandAccuracyInPercentage()) / 2.0;
-    std::normal_distribution<double> distribution(meanAfterExecution, standardDeviation);
-
-    double newPositionWithAddedNoise = distribution(generator);
-
-    robotPosition = newPositionWithAddedNoise;
+    double noise = noiseGenerator.getNoise(standardDeviation);
+    robotPosition = robotPosition + distance + noise;
 }
 
 double World::percentageToMultiplier(double percentage) {

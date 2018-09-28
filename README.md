@@ -2,6 +2,10 @@
 
 A demo application for the one-dimensional case of the _Kalman filter_ algorithm written in C++, having a user-interface using _gtk_, following the _solid_ principles, and incorporating unit tests.
 
+To execute the tests without the ignored and the sporadic tests (random tests) execute the Tests module with the following arguments:
+
+`~[ignore]~[random-test]`
+
 You will need _gtkmm_ and _Gtkmm-PLplot_ in order to build.
 
 To install gtkmm on linux try this:

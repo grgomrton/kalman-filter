@@ -8,64 +8,92 @@
 using namespace snowhouse;
 using namespace fakeit;
 
-TEST_CASE("Robot should notify localizer about an executed move command") {
-    Mock<ILocalizer> localizer;
-    When(Method(localizer, moveCommandExecuted)).AlwaysReturn();
-    Mock<IMovingObjectContainer> world;
-    When(Method(world, moveCommandExecuted)).AlwaysReturn();
-    double moveAccuracy = 10.0;
-    Robot robot(moveAccuracy, localizer.get(), world.get());
-    double distanceInMetres = 10.0;
-
-    robot.move(distanceInMetres);
-
-    Verify(Method(localizer, moveCommandExecuted)).Exactly(1);
-}
-
-TEST_CASE("Robot should notify world about an executed move command") {
-    Mock<ILocalizer> localizer;
-    When(Method(localizer, moveCommandExecuted)).AlwaysReturn();
-    Mock<IMovingObjectContainer> world;
-    When(Method(world, moveCommandExecuted)).AlwaysReturn();
-    double moveAccuracy = 10.0;
-    double precision = 0.001;
-    Robot robot(moveAccuracy, localizer.get(), world.get());
-    double distanceInMetres = 10.0;
-
-    robot.move(distanceInMetres);
-
-    auto passedAccuracyMatchesSpecifiedOne = [moveAccuracy, precision]
-            (IMovingObject& robot, double distance) { return std::abs(robot.getMoveCommandAccuracyInPercentage() - moveAccuracy) < precision; };
-    Verify(Method(world, moveCommandExecuted)).Exactly(1);
-    Verify(Method(world, moveCommandExecuted).Matching(passedAccuracyMatchesSpecifiedOne)).Exactly(1);
-}
-
 TEST_CASE("Robot movement accuracy should not be negative") {
-    Mock<ILocalizer> localizer;
-    Mock<IMovingObjectContainer> world;
     double moveAccuracy = -8.0;
 
-    AssertThrows(std::invalid_argument, Robot(moveAccuracy, localizer.get(), world.get()));
+    AssertThrows(std::invalid_argument, Robot(moveAccuracy));
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("moveCommandAccuracy"));
 }
 
 TEST_CASE("Robot movement accuracy should not be zero") {
-    Mock<ILocalizer> localizer;
-    Mock<IMovingObjectContainer> world;
     double moveAccuracy = 0.0;
 
-    AssertThrows(std::invalid_argument, Robot(moveAccuracy, localizer.get(), world.get()));
+    AssertThrows(std::invalid_argument, Robot(moveAccuracy));
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("moveCommandAccuracy"));
 }
 
 TEST_CASE("Robot should return the specified move accuracy") {
-    Mock<ILocalizer> localizer;
-    Mock<IMovingObjectContainer> world;
     double moveAccuracy = 8.0;
     double precision = 0.001;
-    Robot robot(moveAccuracy, localizer.get(), world.get());
+    Robot robot(moveAccuracy);
 
     auto storedAccuracy = robot.getMoveCommandAccuracyInPercentage();
 
     AssertThat(storedAccuracy, Is().EqualToWithDelta(moveAccuracy, precision));
+}
+
+TEST_CASE("A listener should be notified about an executed move command") {
+    double moveAccuracy = 8.0;
+    Robot robot(moveAccuracy);
+    int callCount = 0;
+    auto listener = [&](double distance) { callCount++; };
+    robot.addRobotMoveCommandReceivedListener(listener);
+    int expectedCallCount = 1;
+    double distance = 10.0;
+
+    robot.move(distance);
+
+    AssertThat(callCount, Is().EqualTo(expectedCallCount));
+}
+
+TEST_CASE("Multiple listeners should be notified about an executed move command") {
+    double moveAccuracy = 8.0;
+    Robot robot(moveAccuracy);
+    int callCountInFirstListener = 0;
+    int callCountInSecondListener = 0;
+    auto firstListener = [&](double) { callCountInFirstListener++; };
+    auto secondListener = [&](double) { callCountInSecondListener++; };
+    robot.addRobotMoveCommandReceivedListener(firstListener);
+    robot.addRobotMoveCommandReceivedListener(secondListener);
+    int expectedCallCount = 1;
+    double distance = 10.0;
+
+    robot.move(distance);
+
+    AssertThat(callCountInFirstListener, Is().EqualTo(expectedCallCount));
+    AssertThat(callCountInSecondListener, Is().EqualTo(expectedCallCount));
+}
+
+TEST_CASE("Multiple listeners should be notified about consecutive move commands") {
+    double moveAccuracy = 8.0;
+    Robot robot(moveAccuracy);
+    int callCountInFirstListener = 0;
+    int callCountInSecondListener = 0;
+    auto firstListener = [&](double) { callCountInFirstListener++; };
+    auto secondListener = [&](double) { callCountInSecondListener++; };
+    robot.addRobotMoveCommandReceivedListener(firstListener);
+    robot.addRobotMoveCommandReceivedListener(secondListener);
+    int expectedCallCount = 2;
+    double distance = 10.0;
+
+    robot.move(distance);
+    robot.move(-distance);
+
+    AssertThat(callCountInFirstListener, Is().EqualTo(expectedCallCount));
+    AssertThat(callCountInSecondListener, Is().EqualTo(expectedCallCount));
+}
+
+TEST_CASE("Robot should pass the executed distance to the listener") {
+    double moveAccuracy = 8.0;
+    Robot robot(moveAccuracy);
+    double receivedDistance = 0.0;
+    auto listener = [&](double distance) { receivedDistance = distance; };
+    robot.addRobotMoveCommandReceivedListener(listener);
+    double distance = 12.55;
+    double expectedDistance = 12.55;
+    double precision = 0.001;
+
+    robot.move(distance);
+
+    AssertThat(receivedDistance, Is().EqualToWithDelta(expectedDistance, precision));
 }

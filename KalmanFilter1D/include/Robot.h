@@ -1,16 +1,16 @@
 #pragma once
 
+#include <functional>
+#include <vector>
 #include "IMovingObject.h"
-#include "ILocalizer.h"
-#include "IMovingObjectContainer.h"
 
 class Robot : public IMovingObject {
 public:
-    Robot(double moveCommandAccuracyInPercentage, ILocalizer& localizer, IMovingObjectContainer& world);
+    explicit Robot(double moveCommandAccuracyInPercentage);
     void move(double distanceInMetres);
     double getMoveCommandAccuracyInPercentage() override;
+    void addRobotMoveCommandReceivedListener(std::function<void(double)>); // TODO change it to an interface
 private:
     double moveCommandAccuracyInPercentage;
-    ILocalizer& localizer;
-    IMovingObjectContainer& world;
+    std::vector<std::function<void(double)>> listeners;
 };

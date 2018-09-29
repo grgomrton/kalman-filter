@@ -1,27 +1,56 @@
 #include <stdexcept>
+#include <iostream>
+#include <exception>
+#include <algorithm>
 #include "Robot.h"
 
 Robot::Robot(double moveCommandAccuracyInPercentage) :
         moveCommandAccuracyInPercentage(moveCommandAccuracyInPercentage),
-        listeners()
-{
+        listeners() {
     if (moveCommandAccuracyInPercentage <= 0.0) {
-        throw std::invalid_argument("moveCommandAccuracyInPercentage cannot be smaller than or equal to zero");
+        throw std::invalid_argument("moveCommandAccuracyInPercentage must be a non-zero positive value");
     }
 }
 
-void Robot::move(double distanceInMetres)
-{
+void Robot::move(double distanceInMetres) {
+    std::vector<std::weak_ptr<std::function<void(double)>>> brokenListeners;
+
     for (auto& listener : listeners) {
-        listener(distanceInMetres);
+        if (auto callable = listener.lock()) {
+            try {
+                (*callable)(distanceInMetres);
+            }
+            catch (std::exception& e) {
+                brokenListeners.push_back(listener); // todo log
+            }
+            catch (...) {
+                brokenListeners.push_back(listener); // todo log
+            }
+        } else {
+            brokenListeners.push_back(listener); // todo log
+        }
     }
+
+    auto isBroken = [&](std::weak_ptr<std::function<void(double)>>& listener) {
+        for (auto& brokenListener : brokenListeners) {
+            if (pointsToSameObject(listener, brokenListener)) {
+                return true;
+            }
+        }
+        return false;
+    };
+    listeners.erase(remove_if(begin(listeners), end(listeners), isBroken), end(listeners));
 }
 
-double Robot::getMoveCommandAccuracyInPercentage()
-{
+double Robot::getMoveCommandAccuracyInPercentage() {
     return moveCommandAccuracyInPercentage;
 }
 
-void Robot::addRobotMoveCommandReceivedListener(std::function<void(double)> listener) {
-    listeners.push_back(listener); // TODO no equality check for std::function > no double subscr check and no unsubscribe
+void Robot::addMoveCommandListener(const std::shared_ptr<std::function<void(double)>>& listener) {
+    listeners.push_back(listener); // todo disable multiple subscription
+}
+
+template<typename T>
+bool Robot::pointsToSameObject(const std::weak_ptr<T>& item, const std::weak_ptr<T>& itemToCompareWith) {
+    return !(item.owner_before(itemToCompareWith) || itemToCompareWith.owner_before(item));
 }

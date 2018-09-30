@@ -11,7 +11,10 @@ TEST_CASE("After init world should return the initial robot position") {
     double initialRobotPosition = 0;
     double precision = 0.001;
     Mock<IGaussianNoiseGenerator> noiseGenerator;
-    World world(initialRobotPosition, noiseGenerator.get());
+    Mock<IObservableRobot> robot;
+    double moveAccuracy = 10.0;
+    When(Method(robot, getMoveCommandAccuracyInPercentage)).AlwaysReturn(moveAccuracy);
+    World world(robot.get(), initialRobotPosition, noiseGenerator.get());
 
     auto currentPosition = world.getRealRobotPosition();
 
@@ -25,13 +28,13 @@ TEST_CASE("After a move command has executed perfectly the robot's position shou
     double noise = 0.0;
     double expectedPosition = 0.8;
     double precision = 0.001;
-    Mock<IMovingObject> robot;
+    Mock<IObservableRobot> robot;
     When(Method(robot, getMoveCommandAccuracyInPercentage)).AlwaysReturn(moveAccuracy);
     Mock<IGaussianNoiseGenerator> noiseGenerator;
     When(Method(noiseGenerator, getNoise)).AlwaysReturn(noise);
-    World world(initialRobotPosition, noiseGenerator.get());
+    World world(robot.get(), initialRobotPosition, noiseGenerator.get());
 
-    world.moveCommandExecuted(robot.get(), moveDistance);
+    world.onRobotMoveCommandReceived(moveDistance);
     auto currentPosition = world.getRealRobotPosition();
 
     AssertThat(currentPosition, Is().EqualToWithDelta(expectedPosition, precision));
@@ -44,13 +47,13 @@ TEST_CASE("During executing the move command noise should be added") {
     double noise = -0.1;
     double expectedPosition = 0.7;
     double precision = 0.001;
-    Mock<IMovingObject> robot;
+    Mock<IObservableRobot> robot;
     When(Method(robot, getMoveCommandAccuracyInPercentage)).AlwaysReturn(moveAccuracy);
     Mock<IGaussianNoiseGenerator> noiseGenerator;
     When(Method(noiseGenerator, getNoise)).AlwaysReturn(noise);
-    World world(initialRobotPosition, noiseGenerator.get());
+    World world(robot.get(), initialRobotPosition, noiseGenerator.get());
 
-    world.moveCommandExecuted(robot.get(), moveDistance);
+    world.onRobotMoveCommandReceived(moveDistance);
     auto currentPosition = world.getRealRobotPosition();
 
     AssertThat(currentPosition, Is().EqualToWithDelta(expectedPosition, precision));

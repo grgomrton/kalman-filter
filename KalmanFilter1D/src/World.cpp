@@ -1,9 +1,10 @@
 #include "IGaussianNoiseGenerator.h"
 #include "World.h"
 
-World::World(double robotPosition, IGaussianNoiseGenerator& noiseGenerator) :
+World::World(const IObservableRobot& robot, double robotPosition, IGaussianNoiseGenerator& noiseGenerator) :
         robotPosition(robotPosition),
-        noiseGenerator(noiseGenerator)
+        noiseGenerator(noiseGenerator),
+        robotMovementAccuracyInPercentage(robot.getMoveCommandAccuracyInPercentage())
 {
 }
 
@@ -11,8 +12,8 @@ double World::getRealRobotPosition() {
     return robotPosition;
 }
 
-void World::moveCommandExecuted(IMovingObject& robot, double distance) {
-    double standardDeviation = distance * percentageToMultiplier(robot.getMoveCommandAccuracyInPercentage()) / 2.0;
+void World::onRobotMoveCommandReceived(double distance) {
+    double standardDeviation = distance * percentageToMultiplier(robotMovementAccuracyInPercentage) / 2.0;
     double noise = noiseGenerator.getNoise(standardDeviation);
     robotPosition = robotPosition + distance + noise;
 }

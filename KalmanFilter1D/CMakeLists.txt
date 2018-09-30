@@ -9,7 +9,7 @@ add_library(KalmanFilter1D
         src/NoiseGenerator.cpp
         include/IGaussianNoiseGenerator.h
         include/ILocalizer.h
-        include/IMovingObject.h
-        include/IMovingObjectContainer.h)
+        include/IObservableRobot.h
+        include/IRobotObserver.h include/EventDispatcher.h)
 
 target_include_directories(KalmanFilter1D PUBLIC include)

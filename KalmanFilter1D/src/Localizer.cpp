@@ -23,7 +23,7 @@ double Localizer::getEstimationAccuracy() {
     return covarianceToAccuracy(currentCovariance);
 }
 
-void Localizer::moveCommandExecuted(double distance) {
+void Localizer::onRobotMoveCommandReceived(double distance) {
     double covarianceOfExecutionError = accuracyToCovariance(accuracyOfMoveCommad(distance));
     double meanAfterMove = currentPosition + distance;
     double covarianceAfterMove = currentCovariance + covarianceOfExecutionError;

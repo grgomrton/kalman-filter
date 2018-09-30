@@ -1,14 +1,20 @@
 #pragma once
 
-#include "IMovingObjectContainer.h"
+#include "IRobotObserver.h"
+#include "IGaussianNoiseGenerator.h"
 
-class World : public IMovingObjectContainer {
+class World : public IRobotObserver {
 public:
-    World(double robotPosition, IGaussianNoiseGenerator& noiseGenerator);
+    World(const IObservableRobot& robot, double robotPosition, IGaussianNoiseGenerator& noiseGenerator);
+
     double getRealRobotPosition();
-    void moveCommandExecuted(IMovingObject& robot, double distance) override;
+
+    void onRobotMoveCommandReceived(double distance) override;
+
 private:
     IGaussianNoiseGenerator& noiseGenerator;
     double robotPosition;
+    double robotMovementAccuracyInPercentage;
+
     double percentageToMultiplier(double percentage);
 };

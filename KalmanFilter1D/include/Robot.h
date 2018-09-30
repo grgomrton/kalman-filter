@@ -3,22 +3,21 @@
 #include <functional>
 #include <vector>
 #include <memory>
-#include "IMovingObject.h"
+#include "IObservableRobot.h"
+#include "IRobotObserver.h"
 
-class Robot : public IMovingObject {
+class Robot : public IObservableRobot {
 public:
     explicit Robot(double moveCommandAccuracyInPercentage);
 
     void move(double distanceInMetres);
 
-    double getMoveCommandAccuracyInPercentage() override;
+    double getMoveCommandAccuracyInPercentage() const override;
 
-    void addMoveCommandListener(const std::shared_ptr<std::function<void(double)>>& listener);
+    void addMoveCommandListener(const std::shared_ptr<IRobotObserver>& listener);
 
 private:
     double moveCommandAccuracyInPercentage;
-    std::vector<std::weak_ptr<std::function<void(double)>>> listeners;
+    std::vector<std::weak_ptr<IRobotObserver>> listeners;
 
-    template<typename T>
-    static bool pointsToSameObject(const std::weak_ptr<T>& item, const std::weak_ptr<T>& itemToCompareWith);
 };

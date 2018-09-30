@@ -27,7 +27,7 @@ public:
     Localizer(double initialPosition, double initialAccuracy, double movementAccuracyInPercentage);
     // TODO comments
     // TODO errorRange instead of accuracy?
-    void moveCommandExecuted(double distance) override;
+    void onRobotMoveCommandReceived(double distance) override;
     void measurementReceived(double measuredPosition, double measurementAccuracy) override;
     double getEstimatedPosition();
     double getEstimationAccuracy();

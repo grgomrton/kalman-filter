@@ -1,5 +1,5 @@
 #include "ILocalizer.h"
-#include "IMovingObjectContainer.h"
+#include "IRobotObserver.h"
 #include "Robot.h"
 #include "catch2/catch.hpp"
 #include "snowhouse/snowhouse.h"
@@ -36,8 +36,11 @@ TEST_CASE("A listener should be notified about an executed move command") {
     double moveAccuracy = 8.0;
     Robot robot(moveAccuracy);
     int callCount = 0;
-    auto listener = std::make_shared<std::function<void(double)>>([&](double distance) { callCount++; });
-    robot.addMoveCommandListener(listener);
+    Mock<IRobotObserver> listenerMock;
+    Fake(Dtor(listenerMock));
+    When(Method(listenerMock, onRobotMoveCommandReceived)).AlwaysDo([&](double distance) { callCount++; });
+    std::shared_ptr<IRobotObserver> sharedListener(&listenerMock.get());
+    robot.addMoveCommandListener(sharedListener);
     int expectedCallCount = 1;
     double distance = 10.0;
 
@@ -50,8 +53,11 @@ TEST_CASE("Robot should pass the executed distance to the listener") {
     double moveAccuracy = 8.0;
     Robot robot(moveAccuracy);
     double receivedDistance = 0.0;
-    auto listener = std::make_shared<std::function<void(double)>>([&](double distance) { receivedDistance = distance; });
-    robot.addMoveCommandListener(listener);
+    Mock<IRobotObserver> listenerMock;
+    Fake(Dtor(listenerMock));
+    When(Method(listenerMock, onRobotMoveCommandReceived)).AlwaysDo([&](double distance) { receivedDistance = distance; });
+    std::shared_ptr<IRobotObserver> sharedListener(&listenerMock.get());
+    robot.addMoveCommandListener(sharedListener);
     double distance = 12.55;
     double expectedDistance = 12.55;
     double precision = 0.001;
@@ -66,10 +72,16 @@ TEST_CASE("Multiple listeners should be notified about an executed move command"
     Robot robot(moveAccuracy);
     int callCountInFirstListener = 0;
     int callCountInSecondListener = 0;
-    auto firstListener = std::make_shared<std::function<void(double)>>([&](double) { callCountInFirstListener++; });
-    auto secondListener = std::make_shared<std::function<void(double)>>([&](double) { callCountInSecondListener++; });
-    robot.addMoveCommandListener(firstListener);
-    robot.addMoveCommandListener(secondListener);
+    Mock<IRobotObserver> firstListenerMock;
+    Mock<IRobotObserver> secondListenerMock;
+    Fake(Dtor(firstListenerMock));
+    Fake(Dtor(secondListenerMock));
+    When(Method(firstListenerMock, onRobotMoveCommandReceived)).AlwaysDo([&](double) { callCountInFirstListener++; });
+    When(Method(secondListenerMock, onRobotMoveCommandReceived)).AlwaysDo([&](double) { callCountInSecondListener++; });
+    std::shared_ptr<IRobotObserver> sharedFirstListener(&firstListenerMock.get());
+    std::shared_ptr<IRobotObserver> sharedSecondListener(&secondListenerMock.get());
+    robot.addMoveCommandListener(sharedFirstListener);
+    robot.addMoveCommandListener(sharedSecondListener);
     int expectedCallCount = 1;
     double distance = 10.0;
 
@@ -84,10 +96,16 @@ TEST_CASE("Multiple listeners should be notified about consecutive move commands
     Robot robot(moveAccuracy);
     int callCountInFirstListener = 0;
     int callCountInSecondListener = 0;
-    auto firstListener = std::make_shared<std::function<void(double)>>([&](double) { callCountInFirstListener++; });
-    auto secondListener = std::make_shared<std::function<void(double)>>([&](double) { callCountInSecondListener++; });
-    robot.addMoveCommandListener(firstListener);
-    robot.addMoveCommandListener(secondListener);
+    Mock<IRobotObserver> firstListenerMock;
+    Mock<IRobotObserver> secondListenerMock;
+    Fake(Dtor(firstListenerMock));
+    Fake(Dtor(secondListenerMock));
+    When(Method(firstListenerMock, onRobotMoveCommandReceived)).AlwaysDo([&](double) { callCountInFirstListener++; });
+    When(Method(secondListenerMock, onRobotMoveCommandReceived)).AlwaysDo([&](double) { callCountInSecondListener++; });
+    std::shared_ptr<IRobotObserver> sharedFirstListener(&firstListenerMock.get());
+    std::shared_ptr<IRobotObserver> sharedSecondListener(&secondListenerMock.get());
+    robot.addMoveCommandListener(sharedFirstListener);
+    robot.addMoveCommandListener(sharedSecondListener);
     int expectedCallCount = 2;
     double distance = 10.0;
 
@@ -102,90 +120,44 @@ TEST_CASE("An expired listener should not be called") {
     double moveAccuracy = 8.0;
     Robot robot(moveAccuracy);
     int callCount = 0;
-    auto listener = std::make_shared<std::function<void(double)>>([&](double distance) { callCount++; });
-    robot.addMoveCommandListener(listener);
-    listener.reset();
-    int expectedCallCount = 0; // todo assert log - once we have it
+    Mock<IRobotObserver> listenerMock;
+    Fake(Dtor(listenerMock));
+    When(Method(listenerMock, onRobotMoveCommandReceived)).AlwaysDo([&](double distance) { callCount++; });
+    std::shared_ptr<IRobotObserver> sharedListener(&listenerMock.get());
+    robot.addMoveCommandListener(sharedListener);
+    int expectedCallCount = 0;
     double distance = 10.0;
 
+    sharedListener.reset();
     robot.move(distance);
 
     AssertThat(callCount, Is().EqualTo(expectedCallCount));
 }
 
-TEST_CASE("A throwing listener should be removed from the listeners") {
-    double moveAccuracy = 8.0;
-    Robot robot(moveAccuracy);
-    int normalListenerCallCount = 0;
-    auto properListener = std::make_shared<std::function<void(double)>>([&](double) {
-        normalListenerCallCount++;
-    });
-    int throwingCallCount = 0;
-    auto exceptionThrowingListener = std::make_shared<std::function<void(double)>>([&](double) {
-        throwingCallCount++;
-        throw "Fail for test purposes";
-    });
-    robot.addMoveCommandListener(properListener);
-    robot.addMoveCommandListener(exceptionThrowingListener);
-    int expectedNormalListenerCallCount = 2;
-    int expectedThrowingListenerCallCount = 1;
-    double distance = 10.0;
-
-    robot.move(distance);
-    robot.move(distance);
-
-    AssertThat(normalListenerCallCount, Is().EqualTo(expectedNormalListenerCallCount));
-    AssertThat(throwingCallCount, Is().EqualTo(expectedThrowingListenerCallCount));
-}
-
-
-TEST_CASE("An exception throwing listener should be removed from the listeners") {
-    double moveAccuracy = 8.0;
-    Robot robot(moveAccuracy);
-    int normalListenerCallCount = 0;
-    auto properListener = std::make_shared<std::function<void(double)>>([&](double) {
-        normalListenerCallCount++;
-    });
-    int throwingCallCount = 0;
-    auto exceptionThrowingListener = std::make_shared<std::function<void(double)>>([&](double) {
-        throwingCallCount++;
-        throw std::logic_error("Exception raised for test purposes");
-    });
-    robot.addMoveCommandListener(properListener);
-    robot.addMoveCommandListener(exceptionThrowingListener);
-    int expectedNormalListenerCallCount = 2;
-    int expectedThrowingListenerCallCount = 1;
-    double distance = 10.0;
-
-    robot.move(distance);
-    robot.move(distance);
-
-    AssertThat(normalListenerCallCount, Is().EqualTo(expectedNormalListenerCallCount));
-    AssertThat(throwingCallCount, Is().EqualTo(expectedThrowingListenerCallCount));
-}
-
 TEST_CASE("After an expired listener removed the rest of the listeners should be called") {
     double moveAccuracy = 8.0;
     Robot robot(moveAccuracy);
-    int normalListenerCallCount = 0;
-    auto properListener = std::make_shared<std::function<void(double)>>([&](double) {
-        normalListenerCallCount++;
-    });
-    int deletedCallCount = 0;
-    auto deletedListener = std::make_shared<std::function<void(double)>>([&](double) {
-        deletedCallCount ++;
-    });
-    robot.addMoveCommandListener(deletedListener);
-    robot.addMoveCommandListener(properListener);
-    int expectedNormalListenerCallCount = 3;
+    int aliveListenerCallCount = 0;
+    int deletedListenerCallCount = 0;
+    Mock<IRobotObserver> aliveListenerMock;
+    Mock<IRobotObserver> deletedListenerMock;
+    Fake(Dtor(aliveListenerMock));
+    Fake(Dtor(deletedListenerMock));
+    When(Method(aliveListenerMock, onRobotMoveCommandReceived)).AlwaysDo([&](double) { aliveListenerCallCount++; });
+    When(Method(deletedListenerMock, onRobotMoveCommandReceived)).AlwaysDo([&](double) { deletedListenerCallCount++; });
+    std::shared_ptr<IRobotObserver> sharedAliveListener(&aliveListenerMock.get());
+    std::shared_ptr<IRobotObserver> sharedDeletedListener(&deletedListenerMock.get());
+    robot.addMoveCommandListener(sharedAliveListener);
+    robot.addMoveCommandListener(sharedDeletedListener);
+    int expectedAliveListenerCallCount = 3;
     int expectedDeletedListenerCallCount = 1;
     double distance = 10.0;
 
     robot.move(distance);
-    deletedListener.reset();
+    sharedDeletedListener.reset();
     robot.move(distance);
     robot.move(distance);
 
-    AssertThat(normalListenerCallCount, Is().EqualTo(expectedNormalListenerCallCount));
-    AssertThat(deletedCallCount , Is().EqualTo(expectedDeletedListenerCallCount));
+    AssertThat(aliveListenerCallCount, Is().EqualTo(expectedAliveListenerCallCount));
+    AssertThat(deletedListenerCallCount , Is().EqualTo(expectedDeletedListenerCallCount));
 }

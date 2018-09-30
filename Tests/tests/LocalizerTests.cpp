@@ -74,7 +74,7 @@ TEST_CASE("After a movement the mean should move to the endpoint of the command"
     double precision = 0.001;
     Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
-    localizer.moveCommandExecuted(distanceInMetres);
+    localizer.onRobotMoveCommandReceived(distanceInMetres);
     auto estimatedPosition = localizer.getEstimatedPosition();
 
     AssertThat(estimatedPosition, Is().EqualToWithDelta(expectedPositionAfterMove, precision));
@@ -88,7 +88,7 @@ TEST_CASE("After a movement the accuracy should be in a higher range") {
     double accuracyOfMoveCommandInPercentage = 8.0;
     Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
-    localizer.moveCommandExecuted(distanceInMetres);
+    localizer.onRobotMoveCommandReceived(distanceInMetres);
     auto estimationAccuracy = localizer.getEstimationAccuracy();
 
     AssertThat(estimationAccuracy, Is().GreaterThan(initialAccuracyInMetres));
@@ -160,7 +160,7 @@ TEST_CASE("After a measurement the move command should introduce uncertainty") {
     Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
     localizer.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
-    localizer.moveCommandExecuted(distanceInMetres);
+    localizer.onRobotMoveCommandReceived(distanceInMetres);
     auto estimatedPosition = localizer.getEstimatedPosition();
     auto estimationAccuracy = localizer.getEstimationAccuracy();
 

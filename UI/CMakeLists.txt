@@ -8,4 +8,4 @@ add_executable(Demo
         src/MainWindow.cpp)
 
 target_include_directories(Demo PRIVATE include ${GTKMM_INCLUDE_DIRS} ${GTKMMPLPLOT_INCLUDE_DIRS})
-target_link_libraries(Demo ${GTKMM_LIBRARIES} ${GTKMMPLPLOT_LIBRARIES})
+target_link_libraries(Demo ${GTKMM_LIBRARIES} ${GTKMMPLPLOT_LIBRARIES} KalmanFilter1D)

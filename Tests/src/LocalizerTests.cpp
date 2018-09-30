@@ -131,10 +131,8 @@ TEST_CASE("The certainty after measurement update is independent of the distance
     Localizer localizerForCloseMeasurement(initial_position);
     Localizer localizerForDistantMeasurement(initial_position);
 
-    auto close_measurement_position = localizerForCloseMeasurement.measurementUpdate(measuredPositionOfCloseMeasurement,
-                                                                                     accuracyOfCloseMeasurement);
-    auto distant_measurement_position = localizerForDistantMeasurement.measurementUpdate(
-            measuredPositionOfDistantMeasurement, accuracyOfDistantMeasurement);
+    auto close_measurement_position = localizerForCloseMeasurement.measurementUpdate(measuredPositionOfCloseMeasurement, accuracyOfCloseMeasurement);
+    auto distant_measurement_position = localizerForDistantMeasurement.measurementUpdate(measuredPositionOfDistantMeasurement, accuracyOfDistantMeasurement);
 
     CHECK(close_measurement_position.accuracy() == Approx(distant_measurement_position.accuracy()).epsilon(precision));
     CHECK(close_measurement_position.accuracy() > magnitudeOfComparisonPrecision);

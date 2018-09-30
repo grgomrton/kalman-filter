@@ -1,10 +1,18 @@
 # Kalman filter demo
 
-A demo application for the one-dimensional case of the _Kalman filter_ algorithm written in C++, having a user-interface using _gtk_, following the _solid_ principles, and incorporating unit tests.
+A demo application for the one-dimensional case of the _Kalman filter_ algorithm.
+
+
+<p align="center"><img src="initial_position_plot.png" alt="Initial position on plot" /></p>
+<p align="center">Plotting the initial position</p>
+
+### Tests
 
 To execute the tests without the ignored and the sporadic tests (random tests) execute the Tests module with the following arguments:
 
 `~[ignore]~[random-test]`
+
+### Build
 
 You will need _gtkmm_ and _Gtkmm-PLplot_ in order to build.
 

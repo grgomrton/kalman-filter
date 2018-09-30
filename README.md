@@ -1,7 +1,6 @@
 # Kalman filter demo
 
-This will be a demo application for the one-dimensional case of the _Kalman filter_ algorithm.
-
+A demo application for the one-dimensional case of the _Kalman filter_ algorithm.
 
 <p align="center"><img src="initial_position_plot.png" alt="Initial position on plot" /></p>
 <p align="center">Plotting the initial position</p>

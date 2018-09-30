@@ -3,21 +3,20 @@
 #include <functional>
 #include <vector>
 #include <memory>
-#include "IObservableRobot.h"
-#include "IRobotObserver.h"
+#include "ILocalizer.h"
+#include "World.h"
 
-class Robot : public IObservableRobot {
+class Robot {
 public:
-    explicit Robot(double moveCommandAccuracyInPercentage);
+    Robot(double moveCommandAccuracyInPercentage, const std::shared_ptr<IWorld>& world, const std::shared_ptr<ILocalizer>& localizer);
 
     void move(double distanceInMetres);
 
-    double getMoveCommandAccuracyInPercentage() const override;
-
-    void addMoveCommandListener(const std::shared_ptr<IRobotObserver>& listener);
+    double getMoveCommandAccuracyInPercentage() const;
 
 private:
     double moveCommandAccuracyInPercentage;
-    std::vector<std::weak_ptr<IRobotObserver>> listeners;
+    std::shared_ptr<IWorld> world;
+    std::shared_ptr<ILocalizer> localizer;
 
 };

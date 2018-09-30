@@ -1,10 +1,10 @@
-#include "NoiseGenerator.h"
+#include "GaussianNoiseGenerator.h"
 
-NoiseGenerator::NoiseGenerator() :
+GaussianNoiseGenerator::GaussianNoiseGenerator() :
         generator(std::random_device()())
     {};
 
-double NoiseGenerator::getNoise(double standardDeviation) {
+double GaussianNoiseGenerator::getNoise(double standardDeviation) {
     std::normal_distribution<double> distribution(0.0, standardDeviation);
     return distribution(generator);
 }

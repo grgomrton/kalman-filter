@@ -1,9 +1,9 @@
 #pragma once
 
-#include "IRobotObserver.h"
 #include "IGaussianNoiseGenerator.h"
+#include "IWorld.h"
 
-class World : public IRobotObserver {
+class World : public IWorld {
 public:
     World(double initialRobotPosition, double movementAccuracyInPercentage, IGaussianNoiseGenerator& noiseGenerator);
 

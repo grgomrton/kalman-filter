@@ -5,11 +5,10 @@ add_library(KalmanFilter1D
         src/Robot.cpp
         include/World.h
         src/World.cpp
-        include/NoiseGenerator.h
-        src/NoiseGenerator.cpp
+        include/GaussianNoiseGenerator.h
+        src/GaussianNoiseGenerator.cpp
         include/IGaussianNoiseGenerator.h
         include/ILocalizer.h
-        include/IObservableRobot.h
-        include/IRobotObserver.h include/EventDispatcher.h)
+        include/IWorld.h)
 
 target_include_directories(KalmanFilter1D PUBLIC include)

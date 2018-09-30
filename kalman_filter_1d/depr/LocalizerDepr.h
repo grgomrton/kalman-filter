@@ -1,12 +1,12 @@
 #pragma once
 
-#include "ILocalizer.h"
+#include "ILocalizerDepr.h"
 
 ///
 /// A one-dimensional Kalman filter which can be used to maintain a gaussian estimation
 /// of the current robot position incorporating move commands and measurements.
 ///
-class Localizer : public ILocalizer {
+class LocalizerDepr : public ILocalizerDepr {
 public:
     /// Initializes a new instance of a Localizer which can be used to
     /// maintain a gaussian estimation of the current robot position incorporating
@@ -24,7 +24,7 @@ public:
     /// The percentage of the movement distance where the robot arrives
     /// with a 95% confidence after a move command has executed.
     /// The percentage must be a non-negative, non-zero value.
-    Localizer(double initialPosition, double initialAccuracy, double movementAccuracyInPercentage);
+    LocalizerDepr(double initialPosition, double initialAccuracy, double movementAccuracyInPercentage);
     // TODO comments
     // TODO errorRange instead of accuracy?
     void onRobotMoveCommandReceived(double distance) override;

@@ -1,7 +1,7 @@
 #pragma once
 
-class IWorld {
+class IWorldDepr {
 public:
     virtual void onRobotMoveCommandReceived(double distance) = 0;
-    virtual ~IWorld() = default;
+    virtual ~IWorldDepr() = default;
 };

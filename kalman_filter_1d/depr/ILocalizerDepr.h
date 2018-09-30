@@ -1,8 +1,8 @@
 #pragma once
 
-class ILocalizer {
+class ILocalizerDepr {
 public:
     virtual void onRobotMoveCommandReceived(double distance) = 0;
     virtual void measurementReceived(double position, double accuracy) = 0;
-    virtual ~ILocalizer() = default;
+    virtual ~ILocalizerDepr() = default;
 };

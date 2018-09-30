@@ -6486,20 +6486,20 @@ namespace Catch {
             = ExeName( config.processName )
             | Help( config.showHelp )
             | Opt( config.listTests )
-                ["-l"]["--list-tests"]
+                ["-l"]["--list-src"]
                 ( "list all/matching test cases" )
             | Opt( config.listTags )
                 ["-t"]["--list-tags"]
                 ( "list all/matching tags" )
             | Opt( config.showSuccessfulTests )
                 ["-s"]["--success"]
-                ( "include successful tests in output" )
+                ( "include successful src in output" )
             | Opt( config.shouldDebugBreak )
                 ["-b"]["--break"]
                 ( "break into debugger on failure" )
             | Opt( config.noThrow )
                 ["-e"]["--nothrow"]
-                ( "skip exception tests" )
+                ( "skip exception src" )
             | Opt( config.showInvisibles )
                 ["-i"]["--invisibles"]
                 ( "show invisibles (tabs, newlines)" )
@@ -6562,7 +6562,7 @@ namespace Catch {
                 ( "multiple of clock resolution to run benchmarks" )
 
             | Arg( config.testsOrTags, "test name|pattern|tags" )
-                ( "which test or tests to use" );
+                ( "which test or src to use" );
 
         return cli;
     }
@@ -6628,7 +6628,7 @@ namespace Catch {
     {
         TestSpecParser parser(ITagAliasRegistry::get());
         if (data.testsOrTags.empty()) {
-            parser.parse("~[.]"); // All not hidden tests
+            parser.parse("~[.]"); // All not hidden src
         }
         else {
             m_hasTestFilters = true;
@@ -9237,7 +9237,7 @@ namespace Catch {
             auto totals = runTests( m_config );
             // Note that on unices only the lower 8 bits are usually used, clamping
             // the return value to 255 prevents false negative when some multiple
-            // of 256 tests has failed
+            // of 256 src has failed
             return (std::min) (MaxExitCode, (std::max) (totals.error, static_cast<int>(totals.assertions.failed)));
         }
         catch( std::exception& ex ) {
@@ -9353,7 +9353,7 @@ namespace Catch {
             mutable std::ostream m_os;
         public:
             // Store the streambuf from cout up-front because
-            // cout may get redirected when running tests
+            // cout may get redirected when running src
             CoutStream() : m_os( Catch::cout().rdbuf() ) {}
             ~CoutStream() override = default;
 
@@ -11106,14 +11106,14 @@ namespace {
 namespace Catch {
 namespace {
 // Colour, message variants:
-// - white: No tests ran.
+// - white: No src ran.
 // -   red: Failed [both/all] N test cases, failed [both/all] M assertions.
 // - white: Passed [both/all] N test cases (no assertions).
-// -   red: Failed N tests cases, failed M assertions.
-// - green: Passed [both/all] N tests cases with M assertions.
+// -   red: Failed N src cases, failed M assertions.
+// - green: Passed [both/all] N src cases with M assertions.
 void printTotals(std::ostream& out, const Totals& totals) {
     if (totals.testCases.total() == 0) {
-        out << "No tests ran.";
+        out << "No src ran.";
     } else if (totals.testCases.failed == totals.testCases.total()) {
         Colour colour(Colour::ResultError);
         const std::string qualify_assertions_failed =
@@ -11905,9 +11905,9 @@ struct SummaryColumn {
 
 void ConsoleReporter::printTotals( Totals const& totals ) {
     if (totals.testCases.total() == 0) {
-        stream << Colour(Colour::Warning) << "No tests ran\n";
+        stream << Colour(Colour::Warning) << "No src ran\n";
     } else if (totals.assertions.total() > 0 && totals.testCases.allPassed()) {
-        stream << Colour(Colour::ResultSuccess) << "All tests passed";
+        stream << Colour(Colour::ResultSuccess) << "All src passed";
         stream << " ("
             << pluralise(totals.assertions.passed, "assertion") << " in "
             << pluralise(totals.testCases.passed, "test case") << ')'
@@ -12089,7 +12089,7 @@ namespace Catch {
         xml.writeAttribute( "name", stats.groupInfo.name );
         xml.writeAttribute( "errors", unexpectedExceptions );
         xml.writeAttribute( "failures", stats.totals.assertions.failed-unexpectedExceptions );
-        xml.writeAttribute( "tests", stats.totals.assertions.total() );
+        xml.writeAttribute( "src", stats.totals.assertions.total() );
         xml.writeAttribute( "hostname", "tbd" ); // !TBD
         if( m_config->showDurations() == ShowDurations::Never )
             xml.writeAttribute( "time", "" );

@@ -1,8 +1,8 @@
 #include <stdexcept>
 #include <cmath>
-#include "Localizer.h"
+#include "LocalizerDepr.h"
 
-Localizer::Localizer(double initialPosition, double initialAccuracy, double movementAccuracyInPercentage) :
+LocalizerDepr::LocalizerDepr(double initialPosition, double initialAccuracy, double movementAccuracyInPercentage) :
     currentPosition(initialPosition),
     currentCovariance(accuracyToCovariance(initialAccuracy)),
     distanceMultiplier(percentageToMultiplier(movementAccuracyInPercentage))
@@ -15,15 +15,15 @@ Localizer::Localizer(double initialPosition, double initialAccuracy, double move
     }
 }
 
-double Localizer::getEstimatedPosition() {
+double LocalizerDepr::getEstimatedPosition() {
     return currentPosition;
 }
 
-double Localizer::getEstimationAccuracy() {
+double LocalizerDepr::getEstimationAccuracy() {
     return covarianceToAccuracy(currentCovariance);
 }
 
-void Localizer::onRobotMoveCommandReceived(double distance) {
+void LocalizerDepr::onRobotMoveCommandReceived(double distance) {
     double covarianceOfExecutionError = accuracyToCovariance(accuracyOfMoveCommad(distance));
     double meanAfterMove = currentPosition + distance;
     double covarianceAfterMove = currentCovariance + covarianceOfExecutionError;
@@ -32,7 +32,7 @@ void Localizer::onRobotMoveCommandReceived(double distance) {
     currentCovariance = covarianceAfterMove;
 }
 
-void Localizer::measurementReceived(double measuredPosition, double measurementAccuracy) {
+void LocalizerDepr::measurementReceived(double measuredPosition, double measurementAccuracy) {
     double covarianceOfMeasurementError = accuracyToCovariance(measurementAccuracy);
     double gain = currentCovariance / (currentCovariance + covarianceOfMeasurementError);
     double meanAfterMeasurement = currentPosition + gain * (measuredPosition - currentPosition);
@@ -42,19 +42,19 @@ void Localizer::measurementReceived(double measuredPosition, double measurementA
     currentCovariance = covarianceAfterMeasurement;
 }
 
-double Localizer::accuracyToCovariance(double accuracy) {
+double LocalizerDepr::accuracyToCovariance(double accuracy) {
     auto standardDeviation = accuracy / 2.0;
     return pow(standardDeviation, 2.0);
 }
 
-double Localizer::covarianceToAccuracy(double covariance) {
+double LocalizerDepr::covarianceToAccuracy(double covariance) {
     return sqrt(covariance) * 2.0;
 }
 
-double Localizer::percentageToMultiplier(double percentage) {
+double LocalizerDepr::percentageToMultiplier(double percentage) {
     return percentage / 100.0;
 }
 
-double Localizer::accuracyOfMoveCommad(double distance) {
+double LocalizerDepr::accuracyOfMoveCommad(double distance) {
     return distance * distanceMultiplier;
 }

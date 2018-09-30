@@ -1,8 +1,5 @@
-#include "GaussianNoiseGenerator.h"
-#include "catch2/catch.hpp"
-#include "snowhouse/snowhouse.h"
-
-using namespace snowhouse;
+#include <catch2/catch.hpp>
+#include "GaussianNoise.h"
 
 TEST_CASE("Gaussian noise generator should have a mean at zero and should follow gaussian distribution", "[random-test]") {
     // Tested with a one-way table chi square test
@@ -15,13 +12,15 @@ TEST_CASE("Gaussian noise generator should have a mean at zero and should follow
     double expectedItemCountAboveOneStandardDeviationFromMean = sampleSize * 0.159;
     double expectedMean = 0.0;
     double standardDeviation = 0.1;
-    auto itemIsBelowOneStandardDeviationBelowMean = [=](double item){ return item < expectedMean - standardDeviation; };
-    auto itemIsInOneStandardDeviationBelowMean = [=](double item){ return (item >= expectedMean - standardDeviation) && (item < expectedMean); };
-    auto itemIsInOneStandardDeviationAboveMean = [=](double item){ return (item >= expectedMean) && (item < expectedMean + standardDeviation); };
-    auto itemIsAboveOneStandardDeviationAboveMean = [=](double item){ return item >= expectedMean + standardDeviation; };
-    GaussianNoiseGenerator noiseGenerator;
+    auto itemIsBelowOneStandardDeviationBelowMean = [=](double item) { return item < expectedMean - standardDeviation; };
+    auto itemIsInOneStandardDeviationBelowMean = [=](double item) { return (item >= expectedMean - standardDeviation) && (item < expectedMean); };
+    auto itemIsInOneStandardDeviationAboveMean = [=](double item) { return (item >= expectedMean) && (item < expectedMean + standardDeviation); };
+    auto itemIsAboveOneStandardDeviationAboveMean = [=](double item) {
+        return item >= expectedMean + standardDeviation;
+    };
+    GaussianNoise noiseGenerator;
 
-    for (int i=0; i<sampleSize; i++) {
+    for (int i = 0; i < sampleSize; i++) {
         values.push_back(noiseGenerator.getNoise(standardDeviation));
     }
 
@@ -35,5 +34,5 @@ TEST_CASE("Gaussian noise generator should have a mean at zero and should follow
     chiSquare += calculateChiSquare(itemCountInOneStandardDeviationBelowMean, expectedItemCountInOneStandardDeviationBelowMean);
     chiSquare += calculateChiSquare(itemCountInOneStandardDeviationAboveMean, expectedItemCountInOneStandardDeviationAboveMean);
     chiSquare += calculateChiSquare(itemCountAboveOneStandardDeviationAboveMean, expectedItemCountAboveOneStandardDeviationFromMean);
-    AssertThat(chiSquare, Is().LessThan(higherBoundToKeepNullHypothesis));
+    CHECK(chiSquare < higherBoundToKeepNullHypothesis);
 }

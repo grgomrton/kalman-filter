@@ -1,7 +1,7 @@
-#include "IGaussianNoiseGenerator.h"
-#include "World.h"
+#include "IGaussianNoiseGeneratorDepr.h"
+#include "WorldDepr.h"
 
-World::World(double initialRobotPosition, double movementAccuracyInPercentage, IGaussianNoiseGenerator& noiseGenerator)
+WorldDepr::WorldDepr(double initialRobotPosition, double movementAccuracyInPercentage, IGaussianNoiseGeneratorDepr& noiseGenerator)
         :
         robotPosition(initialRobotPosition),
         noiseGenerator(noiseGenerator),
@@ -9,16 +9,16 @@ World::World(double initialRobotPosition, double movementAccuracyInPercentage, I
 {
 }
 
-double World::getRealRobotPosition() {
+double WorldDepr::getRealRobotPosition() {
     return robotPosition;
 }
 
-void World::onRobotMoveCommandReceived(double distance) {
+void WorldDepr::onRobotMoveCommandReceived(double distance) {
     double standardDeviation = distance * percentageToMultiplier(robotMovementAccuracyInPercentage) / 2.0;
     double noise = noiseGenerator.getNoise(standardDeviation);
     robotPosition = robotPosition + distance + noise;
 }
 
-double World::percentageToMultiplier(double percentage) {
+double WorldDepr::percentageToMultiplier(double percentage) {
     return percentage / 100.0;
 }

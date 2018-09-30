@@ -1,5 +1,5 @@
-#include "ILocalizer.h"
-#include "Robot.h"
+#include "../../kalman_filter_1d/depr/ILocalizerDepr.h"
+#include "../../kalman_filter_1d/depr/RobotDepr.h"
 #include "catch2/catch.hpp"
 #include "snowhouse/snowhouse.h"
 #include "fakeit/standalone/fakeit.hpp"
@@ -10,21 +10,21 @@ using namespace fakeit;
 TEST_CASE("Robot movement accuracy should not be negative") {
     double moveAccuracy = -8.0;
 
-    AssertThrows(std::invalid_argument, Robot(moveAccuracy, std::shared_ptr<IWorld>(), std::shared_ptr<ILocalizer>()));
+    AssertThrows(std::invalid_argument, RobotDepr(moveAccuracy, std::shared_ptr<IWorldDepr>(), std::shared_ptr<ILocalizerDepr>()));
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("moveCommandAccuracy"));
 }
 
 TEST_CASE("Robot movement accuracy should not be zero") {
     double moveAccuracy = 0.0;
 
-    AssertThrows(std::invalid_argument, Robot(moveAccuracy, std::shared_ptr<IWorld>(), std::shared_ptr<ILocalizer>()));
+    AssertThrows(std::invalid_argument, RobotDepr(moveAccuracy, std::shared_ptr<IWorldDepr>(), std::shared_ptr<ILocalizerDepr>()));
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("moveCommandAccuracy"));
 }
 
 TEST_CASE("Robot should return the specified move accuracy") {
     double moveAccuracy = 8.0;
     double precision = 0.001;
-    Robot robot(moveAccuracy, std::shared_ptr<IWorld>(), std::shared_ptr<ILocalizer>());
+    RobotDepr robot(moveAccuracy, std::shared_ptr<IWorldDepr>(), std::shared_ptr<ILocalizerDepr>());
 
     auto storedAccuracy = robot.getMoveCommandAccuracyInPercentage();
 

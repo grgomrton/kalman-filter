@@ -1,28 +1,28 @@
-#include "Localizer.h"
+#include "../../kalman_filter_1d/depr/LocalizerDepr.h"
 #include "catch2/catch.hpp"
 #include "snowhouse/snowhouse.h"
 
 using namespace snowhouse;
 
-TEST_CASE("After initialization the estimated position should be identical with the passed one") {
+TEST_CASE("After initialization the estimated position should be identical with the passed one_") { // done
     double initialPositionInMetres = 5.0;
     double initialAccuracyInMetres = 0.05;
     double accuracyOfMoveCommandInPercentage = 8.0;
     double precision = 0.001;
 
-    Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    LocalizerDepr localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
     auto estimatedPosition = localizer.getEstimatedPosition();
 
     AssertThat(estimatedPosition, Is().EqualToWithDelta(initialPositionInMetres, precision));
 }
 
-TEST_CASE("After initialization the estimated accuracy should be identical with the passed one") {
+TEST_CASE("After initialization the estimated accuracy should be identical with the passed one") { // done
     double initialPosition = 5.0;
     double initialAccuracy = 0.05;
     double accuracyOfMoveCommandInPercentage = 8.0;
     double precision = 0.001;
 
-    Localizer localizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
+    LocalizerDepr localizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
     auto estimatedAccuracy = localizer.getEstimationAccuracy();
 
     AssertThat(estimatedAccuracy, Is().EqualToWithDelta(initialAccuracy, precision));
@@ -33,7 +33,7 @@ TEST_CASE("Initial accuracy should not be negative") {
     double initialAccuracy = -0.05;
     double accuracyOfMoveCommandInPercentage = 8.0;
 
-    AssertThrows(std::invalid_argument, Localizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
+    AssertThrows(std::invalid_argument, LocalizerDepr(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("initialAccuracy"));
 }
 
@@ -42,7 +42,7 @@ TEST_CASE("Initial accuracy should not be zero") {
     double initialAccuracy = 0.0;
     double accuracyOfMoveCommandInPercentage = 8.0;
 
-    AssertThrows(std::invalid_argument, Localizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
+    AssertThrows(std::invalid_argument, LocalizerDepr(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("initialAccuracy"));
 }
 
@@ -52,7 +52,7 @@ TEST_CASE("Estimator movement accuracy should not be negative") {
     double initialAccuracy = 0.05;
     double accuracyOfMoveCommandInPercentage = -8.0;
 
-    AssertThrows(std::invalid_argument, Localizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
+    AssertThrows(std::invalid_argument, LocalizerDepr(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("movementAccuracy"));
 }
 
@@ -61,18 +61,18 @@ TEST_CASE("Estimator movement accuracy should not be zero") {
     double initialAccuracy = 0.05;
     double accuracyOfMoveCommandInPercentage = 0.0;
 
-    AssertThrows(std::invalid_argument, Localizer(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
+    AssertThrows(std::invalid_argument, LocalizerDepr(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage));
     AssertThat(LastException<std::invalid_argument>().what(), Is().Containing("movementAccuracy"));
 }
 
-TEST_CASE("After a movement the mean should move to the endpoint of the command") {
+TEST_CASE("After a movement the mean should move to the endpoint of the command_") { // done
     double initialPositionInMetres = 5.0;
     double initialAccuracyInMetres = 0.05;
     double distanceInMetres = 1.0;
     double accuracyOfMoveCommandInPercentage = 8.0;
     double expectedPositionAfterMove = 6.0;
     double precision = 0.001;
-    Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    LocalizerDepr localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
     localizer.onRobotMoveCommandReceived(distanceInMetres);
     auto estimatedPosition = localizer.getEstimatedPosition();
@@ -81,12 +81,12 @@ TEST_CASE("After a movement the mean should move to the endpoint of the command"
 }
 
 
-TEST_CASE("After a movement the accuracy should be in a higher range") {
+TEST_CASE("After a movement the accuracy should be in a higher range_") {
     double initialPositionInMetres = 5.0;
     double initialAccuracyInMetres = 0.05;
     double distanceInMetres = 1.0;
     double accuracyOfMoveCommandInPercentage = 8.0;
-    Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    LocalizerDepr localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
     localizer.onRobotMoveCommandReceived(distanceInMetres);
     auto estimationAccuracy = localizer.getEstimationAccuracy();
@@ -94,13 +94,13 @@ TEST_CASE("After a movement the accuracy should be in a higher range") {
     AssertThat(estimationAccuracy, Is().GreaterThan(initialAccuracyInMetres));
 }
 
-TEST_CASE("After a measurement the mean should move in between the original and the measured one") {
+TEST_CASE("After a measurement the mean should move in between the original and the measured one_") {
     double initialPositionInMetres = 3.0;
     double initialAccuracyInMetres = 0.5;
     double measuredPositionInMetres = 3.3;
     double accuracyOfMeasurementInMetres = 0.5;
     double accuracyOfMoveCommandInPercentage = 8.0;
-    Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    LocalizerDepr localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
     localizer.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
     auto estimatedPosition = localizer.getEstimatedPosition();
@@ -108,13 +108,13 @@ TEST_CASE("After a measurement the mean should move in between the original and 
     AssertThat(estimatedPosition, Is().GreaterThan(initialPositionInMetres).And().LessThan(measuredPositionInMetres));
 }
 
-TEST_CASE("After a measurement the accuracy should be in a smaller range") {
+TEST_CASE("After a measurement the accuracy should be in a smaller range_") {
     double initialPositionInMetres = 3.0;
     double initialAccuracyInMetres = 0.5;
     double measuredPositionInMetres = 3.3;
     double accuracyOfMeasurementInMetres = 0.5;
     double accuracyOfMoveCommandInPercentage = 8.0;
-    Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    LocalizerDepr localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
     localizer.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
     auto estimationAccuracyAfterMeasurement = localizer.getEstimationAccuracy();
@@ -122,7 +122,7 @@ TEST_CASE("After a measurement the accuracy should be in a smaller range") {
     AssertThat(estimationAccuracyAfterMeasurement, Is().LessThan(initialAccuracyInMetres));
 }
 
-TEST_CASE("After a close measurement the accuracy should be in smaller range than both the initial and the measured one") {
+TEST_CASE("After a close measurement the accuracy should be in smaller range than both the initial and the measured one_") {
     // Follows Figure 3.2 (a, b, c) from
     // Thrun, S., Burgard, W.,, Fox, D. (2006). Probabilistic Robotics (Intelligent Robotics and Autonomous Agents).
     double initialPositionInMetres = 8.0;
@@ -134,7 +134,7 @@ TEST_CASE("After a close measurement the accuracy should be in smaller range tha
     double expectedAccuracy = 3.6;
     double precisionForPosition = 0.1;
     double precisionForAccuracy = 0.05;
-    Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    LocalizerDepr localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
     localizer.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
     auto estimatedPosition = localizer.getEstimatedPosition();
@@ -144,7 +144,7 @@ TEST_CASE("After a close measurement the accuracy should be in smaller range tha
     AssertThat(estimationAccuracy, Is().EqualToWithDelta(expectedAccuracy, precisionForAccuracy));
 }
 
-TEST_CASE("After a measurement the move command should introduce uncertainty") {
+TEST_CASE("After a measurement the move command should introduce uncertainty_") {
     // Follows Figure 3.2 (c, d) from
     // Thrun, S., Burgard, W.,, Fox, D. (2006). Probabilistic Robotics (Intelligent Robotics and Autonomous Agents).
     double initialPositionInMetres = 8.0;
@@ -157,7 +157,7 @@ TEST_CASE("After a measurement the move command should introduce uncertainty") {
     double expectedAccuracy = 7.0;
     double precisionForPosition = 0.1;
     double precisionForAccuracy = 0.05;
-    Localizer localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
+    LocalizerDepr localizer(initialPositionInMetres, initialAccuracyInMetres, accuracyOfMoveCommandInPercentage);
 
     localizer.measurementReceived(measuredPositionInMetres, accuracyOfMeasurementInMetres);
     localizer.onRobotMoveCommandReceived(distanceInMetres);
@@ -168,7 +168,7 @@ TEST_CASE("After a measurement the move command should introduce uncertainty") {
     AssertThat(estimationAccuracy, Is().EqualToWithDelta(expectedAccuracy, precisionForAccuracy));
 }
 
-TEST_CASE("The certainty after measurement update is independent of the distance") {
+TEST_CASE("The certainty after measurement update is independent of the distance_") {
     double initialPosition = 3.0;
     double initialAccuracy = 0.5;
     double measuredPositionOfCloseMeasurement = 3.3;
@@ -178,8 +178,8 @@ TEST_CASE("The certainty after measurement update is independent of the distance
     double accuracyOfMoveCommandInPercentage = 8.0;
     double precision = 0.001;
     double magnitudeOfComparisonPrecision = 0.01;
-    Localizer localizerForCloseMeasurement(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
-    Localizer localizerForDistantMeasurement(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
+    LocalizerDepr localizerForCloseMeasurement(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
+    LocalizerDepr localizerForDistantMeasurement(initialPosition, initialAccuracy, accuracyOfMoveCommandInPercentage);
 
     localizerForCloseMeasurement.measurementReceived(measuredPositionOfCloseMeasurement, accuracyOfCloseMeasurement);
     auto estimationAccuracyAfterCloseMeasurement = localizerForCloseMeasurement.getEstimationAccuracy();

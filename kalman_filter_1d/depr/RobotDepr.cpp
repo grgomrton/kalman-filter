@@ -1,9 +1,9 @@
 #include <stdexcept>
 #include <algorithm>
 #include <exception>
-#include "Robot.h"
+#include "RobotDepr.h"
 
-Robot::Robot(double moveCommandAccuracyInPercentage, const std::shared_ptr<IWorld>& world, const std::shared_ptr<ILocalizer>& localizer)
+RobotDepr::RobotDepr(double moveCommandAccuracyInPercentage, const std::shared_ptr<IWorldDepr>& world, const std::shared_ptr<ILocalizerDepr>& localizer)
         :
         moveCommandAccuracyInPercentage(moveCommandAccuracyInPercentage),
         world(world),
@@ -13,11 +13,11 @@ Robot::Robot(double moveCommandAccuracyInPercentage, const std::shared_ptr<IWorl
     }
 }
 
-void Robot::move(double distanceInMetres) {
+void RobotDepr::move(double distanceInMetres) {
     world->onRobotMoveCommandReceived(distanceInMetres);
     localizer->onRobotMoveCommandReceived(distanceInMetres);
 }
 
-double Robot::getMoveCommandAccuracyInPercentage() const {
+double RobotDepr::getMoveCommandAccuracyInPercentage() const {
     return moveCommandAccuracyInPercentage;
 }

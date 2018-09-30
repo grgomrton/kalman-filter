@@ -5,7 +5,7 @@
 
 class World : public IRobotObserver {
 public:
-    World(const IObservableRobot& robot, double robotPosition, IGaussianNoiseGenerator& noiseGenerator);
+    World(double initialRobotPosition, double movementAccuracyInPercentage, IGaussianNoiseGenerator& noiseGenerator);
 
     double getRealRobotPosition();
 

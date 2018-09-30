@@ -1,10 +1,11 @@
 #include "IGaussianNoiseGenerator.h"
 #include "World.h"
 
-World::World(const IObservableRobot& robot, double robotPosition, IGaussianNoiseGenerator& noiseGenerator) :
-        robotPosition(robotPosition),
+World::World(double initialRobotPosition, double movementAccuracyInPercentage, IGaussianNoiseGenerator& noiseGenerator)
+        :
+        robotPosition(initialRobotPosition),
         noiseGenerator(noiseGenerator),
-        robotMovementAccuracyInPercentage(robot.getMoveCommandAccuracyInPercentage())
+        robotMovementAccuracyInPercentage(movementAccuracyInPercentage)
 {
 }
 

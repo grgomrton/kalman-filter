@@ -1,11 +1,10 @@
 # Kalman filter demo
 
-A demo application for the one-dimensional case of the _Kalman filter_ algorithm.
+This will be a demo application for the one-dimensional case of the _Kalman filter_ algorithm.
 
 <p align="center"><img src="initial_position_plot.png" alt="Initial position on plot" /></p>
-<p align="center">Plotting the initial position</p>
 
-### Tests
+### Test execution
 
 To execute the tests without the ignored and the sporadic tests (random tests) execute the Tests module with the following arguments:
 

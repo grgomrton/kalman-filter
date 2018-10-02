@@ -1,7 +1,9 @@
 add_library(KalmanFilter1D
-        src/Localizer.cpp
         include/Localizer.h
+        src/Localizer.cpp
+        include/GaussianNoise.h
         src/GaussianNoise.cpp
-        include/GaussianNoise.h)
+        include/GaussianDistributionDescriptor.h
+        src/GaussianDistributionDescriptor.cpp)
 
 target_include_directories(KalmanFilter1D PUBLIC include)

@@ -4,14 +4,14 @@
 #include <Localizer.h>
 
 MainWindow::MainWindow() {
-    pos_est initial_position_localizer = pos_est::make_from_accuracy(0.0, 0.1); // 0.0 +/-10 cm
+    GaussianDistributionDescriptor initial_position_localizer = GaussianDistributionDescriptor::GaussianDistributionDescriptor(0.0, 0.1); // 0.0 +/-10 cm
     Localizer localizer(initial_position_localizer);
 
     auto label = Gtk::manage(new Gtk::Label("Current estimation: "));
     label->set_margin_bottom(10);
     layout.attach_next_to(*label, Gtk::POS_BOTTOM, 1, 1);
 
-    pos_est current_estimation = localizer.getPosition();
+    GaussianDistributionDescriptor current_estimation = localizer.getPosition();
     auto y_stdddev = [](double x, double mean, double variance) { return 1 / (sqrt(variance)*sqrt(2*M_PI))*pow(M_E, -0.5*pow((x-mean)/sqrt(variance), 2)); }; // ugh
     std::string x_caption = "x";
     std::string y_caption = "";
@@ -21,7 +21,7 @@ MainWindow::MainWindow() {
     std::vector<double> x_values = uniformScale(start, end, reference_point_count);
     std::vector<double> y_values;
     for (double x : x_values) {
-        y_values.push_back(y_stdddev(x, current_estimation.position(), current_estimation.covariance()));
+        y_values.push_back(y_stdddev(x, current_estimation.getPosition(), current_estimation.getVariance()));
     }
 
     auto plot_data = Gtk::manage(new Gtk::PLplot::PlotData2D(x_values, y_values, Gdk::RGBA("red")));

@@ -4,21 +4,21 @@
 TEST_CASE("After initialization the estimated position should be identical with the passed one") {
     double initialPositionInMetres = 5.0;
     double initialAccuracyInMetres = 0.05;
-    pos_est initial_position =
-            pos_est::make_from_accuracy(initialPositionInMetres, initialAccuracyInMetres);
+    GaussianDistributionDescriptor initial_position =
+            GaussianDistributionDescriptor::makeFromAccuracy(initialPositionInMetres, initialAccuracyInMetres);
 
     Localizer localizer(initial_position);
     auto estimatedPosition = localizer.getPosition();
 
-    CHECK(estimatedPosition.position() == Approx(initialPositionInMetres));
-    CHECK(estimatedPosition.accuracy() == Approx(initialAccuracyInMetres));
+    CHECK(estimatedPosition.getPosition() == Approx(initialPositionInMetres));
+    CHECK(estimatedPosition.getAccuracy() == Approx(initialAccuracyInMetres));
 }
 
 TEST_CASE("After a movement the mean should move to the endpoint of the command") {
     double initialPositionInMetres = 5.0;
     double initialAccuracyInMetres = 0.05;
-    pos_est initial_position =
-            pos_est::make_from_accuracy(initialPositionInMetres, initialAccuracyInMetres);
+    GaussianDistributionDescriptor initial_position =
+            GaussianDistributionDescriptor::makeFromAccuracy(initialPositionInMetres, initialAccuracyInMetres);
     double distanceInMetres = 1.0;
     double accuracyOfMoveCommandInPercentage = 8.0;
     double expectedPositionAfterMove = 6.0;
@@ -26,50 +26,50 @@ TEST_CASE("After a movement the mean should move to the endpoint of the command"
 
     auto estimated_position = localizer.movementUpdate(distanceInMetres, accuracyOfMoveCommandInPercentage);
 
-    CHECK(estimated_position.position() == Approx(expectedPositionAfterMove));
+    CHECK(estimated_position.getPosition() == Approx(expectedPositionAfterMove));
 }
 
 TEST_CASE("After a movement the accuracy should be in a higher range") {
     double initialPositionInMetres = 5.0;
     double initialAccuracyInMetres = 0.05;
-    pos_est initial_position =
-            pos_est::make_from_accuracy(initialPositionInMetres, initialAccuracyInMetres);
+    GaussianDistributionDescriptor initial_position =
+            GaussianDistributionDescriptor::makeFromAccuracy(initialPositionInMetres, initialAccuracyInMetres);
     double distanceInMetres = 1.0;
     double accuracyOfMoveCommandInPercentage = 8.0;
     Localizer localizer(initial_position);
 
     auto new_position = localizer.movementUpdate(distanceInMetres, accuracyOfMoveCommandInPercentage);
 
-    CHECK(new_position.accuracy() > initialAccuracyInMetres);
+    CHECK(new_position.getAccuracy() > initialAccuracyInMetres);
 }
 
 TEST_CASE("After a measurement the mean should move in between the original and the measured one") {
     double initialPositionInMetres = 3.0;
     double initialAccuracyInMetres = 0.5;
-    pos_est initial_position =
-            pos_est::make_from_accuracy(initialPositionInMetres, initialAccuracyInMetres);
+    GaussianDistributionDescriptor initial_position =
+            GaussianDistributionDescriptor::makeFromAccuracy(initialPositionInMetres, initialAccuracyInMetres);
     double measuredPositionInMetres = 3.3;
     double accuracyOfMeasurementInMetres = 0.5;
     Localizer localizer(initial_position);
 
     auto new_position = localizer.measurementUpdate(measuredPositionInMetres, accuracyOfMeasurementInMetres);
 
-    CHECK(new_position.position() > initialPositionInMetres);
-    CHECK(new_position.position() < measuredPositionInMetres);
+    CHECK(new_position.getPosition() > initialPositionInMetres);
+    CHECK(new_position.getPosition() < measuredPositionInMetres);
 }
 
 TEST_CASE("After a measurement the accuracy should be in a smaller range") {
     double initialPositionInMetres = 3.0;
     double initialAccuracyInMetres = 0.5;
-    pos_est initial_position =
-            pos_est::make_from_accuracy(initialPositionInMetres, initialAccuracyInMetres);
+    GaussianDistributionDescriptor initial_position =
+            GaussianDistributionDescriptor::makeFromAccuracy(initialPositionInMetres, initialAccuracyInMetres);
     double measuredPositionInMetres = 3.3;
     double accuracyOfMeasurementInMetres = 0.5;
     Localizer localizer(initial_position);
 
     auto new_position = localizer.measurementUpdate(measuredPositionInMetres, accuracyOfMeasurementInMetres);
 
-    CHECK(new_position.accuracy() < initialAccuracyInMetres);
+    CHECK(new_position.getAccuracy() < initialAccuracyInMetres);
 }
 
 TEST_CASE("After a close measurement the accuracy should be in smaller range than both the initial and the measured one") {
@@ -77,8 +77,8 @@ TEST_CASE("After a close measurement the accuracy should be in smaller range tha
     // Thrun, S., Burgard, W.,, Fox, D. (2006). Probabilistic Robotics (Intelligent Robotics and Autonomous Agents).
     double initialPositionInMetres = 8.0;
     double initialAccuracyInMetres = 8.0;
-    pos_est initial_position =
-            pos_est::make_from_accuracy(initialPositionInMetres, initialAccuracyInMetres);
+    GaussianDistributionDescriptor initial_position =
+            GaussianDistributionDescriptor::makeFromAccuracy(initialPositionInMetres, initialAccuracyInMetres);
     double measuredPositionInMetres = 6.0;
     double accuracyOfMeasurementInMetres = 4.0;
     double expectedMean = 6.5;
@@ -89,8 +89,8 @@ TEST_CASE("After a close measurement the accuracy should be in smaller range tha
 
     auto new_position = localizer.measurementUpdate(measuredPositionInMetres, accuracyOfMeasurementInMetres);
 
-    CHECK(new_position.position() == Approx(expectedMean).epsilon(precisionForPosition));
-    CHECK(new_position.accuracy() == Approx(expectedAccuracy).epsilon(precisionForAccuracy));
+    CHECK(new_position.getPosition() == Approx(expectedMean).epsilon(precisionForPosition));
+    CHECK(new_position.getAccuracy() == Approx(expectedAccuracy).epsilon(precisionForAccuracy));
 }
 
 TEST_CASE("After a measurement the move command should introduce uncertainty") {
@@ -98,8 +98,8 @@ TEST_CASE("After a measurement the move command should introduce uncertainty") {
     // Thrun, S., Burgard, W.,, Fox, D. (2006). Probabilistic Robotics (Intelligent Robotics and Autonomous Agents).
     double initialPositionInMetres = 8.0;
     double initialAccuracyInMetres = 8.0;
-    pos_est initial_position =
-            pos_est::make_from_accuracy(initialPositionInMetres, initialAccuracyInMetres);
+    GaussianDistributionDescriptor initial_position =
+            GaussianDistributionDescriptor::makeFromAccuracy(initialPositionInMetres, initialAccuracyInMetres);
     double measuredPositionInMetres = 6.0;
     double accuracyOfMeasurementInMetres = 4.0;
     double distanceInMetres = 15.0;
@@ -113,15 +113,15 @@ TEST_CASE("After a measurement the move command should introduce uncertainty") {
     localizer.measurementUpdate(measuredPositionInMetres, accuracyOfMeasurementInMetres);
     auto last_position = localizer.movementUpdate(distanceInMetres, accuracyOfMoveCommandInPercentage);
 
-    CHECK(last_position.position() == Approx(expectedMean).epsilon(precisionForPosition));
-    CHECK(last_position.accuracy() == Approx(expectedAccuracy).epsilon(precisionForAccuracy));
+    CHECK(last_position.getPosition() == Approx(expectedMean).epsilon(precisionForPosition));
+    CHECK(last_position.getAccuracy() == Approx(expectedAccuracy).epsilon(precisionForAccuracy));
 }
 
 TEST_CASE("The certainty after measurement update is independent of the distance") {
     double initialPosition = 3.0;
     double initialAccuracy = 0.5;
-    pos_est initial_position =
-            pos_est::make_from_accuracy(initialPosition, initialAccuracy);
+    GaussianDistributionDescriptor initial_position =
+            GaussianDistributionDescriptor::makeFromAccuracy(initialPosition, initialAccuracy);
     double measuredPositionOfCloseMeasurement = 3.3;
     double accuracyOfCloseMeasurement = 0.5;
     double measuredPositionOfDistantMeasurement = 5.3;
@@ -134,7 +134,7 @@ TEST_CASE("The certainty after measurement update is independent of the distance
     auto close_measurement_position = localizerForCloseMeasurement.measurementUpdate(measuredPositionOfCloseMeasurement, accuracyOfCloseMeasurement);
     auto distant_measurement_position = localizerForDistantMeasurement.measurementUpdate(measuredPositionOfDistantMeasurement, accuracyOfDistantMeasurement);
 
-    CHECK(close_measurement_position.accuracy() == Approx(distant_measurement_position.accuracy()).epsilon(precision));
-    CHECK(close_measurement_position.accuracy() > magnitudeOfComparisonPrecision);
-    CHECK(distant_measurement_position.accuracy() > magnitudeOfComparisonPrecision);
+    CHECK(close_measurement_position.getAccuracy() == Approx(distant_measurement_position.getAccuracy()).epsilon(precision));
+    CHECK(close_measurement_position.getAccuracy() > magnitudeOfComparisonPrecision);
+    CHECK(distant_measurement_position.getAccuracy() > magnitudeOfComparisonPrecision);
 }

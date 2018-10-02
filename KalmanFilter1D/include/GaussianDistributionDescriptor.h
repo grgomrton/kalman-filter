@@ -14,12 +14,12 @@ public:
 
     static double accuracyToVariance(double accuracy);
 
-    static double varianceToAccuracy(double covariance);
+    static double varianceToAccuracy(double variance);
 
 private:
-    GaussianDistributionDescriptor(double position, double covariance);
+    GaussianDistributionDescriptor(double position, double variance);
 
     double _position;
-    double _covariance;
+    double _variance;
 
 };

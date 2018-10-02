@@ -17,8 +17,8 @@ double GaussianDistributionDescriptor::accuracyToVariance(double accuracy) {
     return pow(standardDeviation, 2.0);
 }
 
-double GaussianDistributionDescriptor::varianceToAccuracy(double covariance) {
-    return sqrt(covariance) * 2.0;
+double GaussianDistributionDescriptor::varianceToAccuracy(double variance) {
+    return sqrt(variance) * 2.0;
 }
 
 double GaussianDistributionDescriptor::getPosition() {
@@ -26,12 +26,12 @@ double GaussianDistributionDescriptor::getPosition() {
 }
 
 double GaussianDistributionDescriptor::getVariance() {
-    return _covariance;
+    return _variance;
 }
 
 double GaussianDistributionDescriptor::getAccuracy() {
-    return varianceToAccuracy(_covariance);
+    return varianceToAccuracy(_variance);
 }
 
-GaussianDistributionDescriptor::GaussianDistributionDescriptor(double position, double covariance)
-        : _position(position), _covariance(covariance) {}
+GaussianDistributionDescriptor::GaussianDistributionDescriptor(double position, double variance)
+        : _position(position), _variance(variance) {}

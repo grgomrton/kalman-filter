@@ -1,4 +1,4 @@
-#include <GaussianDistributionDescriptor.h>
+#include "GaussianDistributionDescriptor.h"
 
 #include <cmath>
 

@@ -29,6 +29,4 @@ private:
     void moveLeftClicked();
     void invalidate();
 
-    static std::vector<double> uniformScale(double start, double end, unsigned int reference_point_count); // plotter?
-    static std::vector<double> plotGaussian(double mean, double variance, const std::vector<double>& scale);
 };

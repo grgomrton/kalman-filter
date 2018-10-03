@@ -16,7 +16,8 @@ public:
     ~MainWindow() override;
 
 private:
-    GaussianDistributionDescriptor currentPosition;
+    double robotPositionInWorld;
+    GaussianDistributionDescriptor robotPositionInLocalizer;
     Localizer localizer;
     double unitStepInMetres;
     double movementAccuracyInPercentage;
@@ -25,12 +26,17 @@ private:
     Gtk::Grid layout;
     Gtk::PLplot::Canvas canvas;
     Gtk::PLplot::PlotData2D* plotData;
+    GaussianDistributionDescriptor* lastReceivedMeasurement;
+    Gtk::PLplot::PlotData2D* measurementPlotData;
     Gtk::PLplot::Plot2D plot;
     Gtk::Button moveLeftButton;
     Gtk::Button moveRightButton;
+    Gtk::Button getGpsSignalButton;
+    bool shouldPlotMeasurement;
 
     void moveLeftClicked();
     void moveRightClicked();
+    void getGpsSignalClicked();
     void invalidate();
 
 };

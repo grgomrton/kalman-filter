@@ -21,7 +21,7 @@ double GaussianDistributionDescriptor::varianceToAccuracy(double variance) {
     return sqrt(variance) * 2.0;
 }
 
-double GaussianDistributionDescriptor::getPosition() {
+double GaussianDistributionDescriptor::getPosition() { // todo estimatedposition or gaussiandistribution
     return _position;
 }
 

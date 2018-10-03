@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
 #include "Plotter.h"
 
-TEST_CASE("Uniform scale should be equally distributed including begin and end") {
+TEST_CASE("Uniform scale should be equally distributed between start and end inclusive") {
     auto start = 0.0;
     auto end = 20.0;
     auto itemCount = 11;
@@ -16,7 +16,7 @@ TEST_CASE("Uniform scale should be equally distributed including begin and end")
     CHECK(scale[9] == Approx(18.0));
 }
 
-TEST_CASE("Gaussian plot should reach gaussian curve values on y-axis") {
+TEST_CASE("Gaussian plot should follow gaussian curve values") {
     // using plot from http://www.visiondummy.com/2014/03/divide-variance-n-1/
     auto mean = 10.0;
     auto stddev = 3.0;

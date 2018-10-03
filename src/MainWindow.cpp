@@ -3,6 +3,7 @@
 #include <gtkmm-plplot/plot2d.h>
 #include <Localizer.h>
 #include <Plotter.h>
+#include <MainWindow.h>
 
 
 MainWindow::MainWindow() : // todo x_scale here!
@@ -10,11 +11,14 @@ MainWindow::MainWindow() : // todo x_scale here!
     localizer(currentPosition),
     plotData(nullptr),
     plot("x", ""), // todo extract to consts
-    moveLeftButton("Move left") {
+    moveLeftButton("Move left"),
+    moveRightButton("Move right"),
+    unitStepInMetres(1.0),
+    movementAccuracyInPercentage(20.0) {
 
     auto label = Gtk::manage(new Gtk::Label("Current estimation: "));
     label->set_margin_bottom(10);
-    layout.attach_next_to(*label, Gtk::POS_BOTTOM, 1, 1);
+    layout.attach(*label, 1, 1, 2, 1);
 
     unsigned int reference_point_count = 1000;
     double start = -10;
@@ -24,10 +28,13 @@ MainWindow::MainWindow() : // todo x_scale here!
 
     canvas.set_hexpand(true);
     canvas.set_vexpand(true);
-    layout.attach_next_to(canvas, Gtk::POS_BOTTOM, 1, 1);
+    layout.attach(canvas, 1, 2, 2, 1);
 
     moveLeftButton.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::moveLeftClicked));
-    layout.attach_next_to(moveLeftButton, Gtk::POS_BOTTOM, 1, 1);
+    layout.attach(moveLeftButton, 1, 3, 1, 1);
+
+    moveRightButton.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::moveRightClicked));
+    layout.attach(moveRightButton, 2, 3, 1, 1);
 
     add(layout);
     set_border_width(10);
@@ -36,11 +43,17 @@ MainWindow::MainWindow() : // todo x_scale here!
 }
 
 void MainWindow::moveLeftClicked() {
-    currentPosition = localizer.movementUpdate(-1.0, 20);
+    currentPosition = localizer.movementUpdate(-unitStepInMetres, movementAccuracyInPercentage);
     invalidate();
-    std::cout << "current position mean: " << currentPosition.getPosition() << " variance: " << currentPosition.getVariance() << std::endl;
-    std::cout << "updated!" << std::endl;
+    std::cout << "current position mean: " << currentPosition.getPosition() << " accuracy: " << currentPosition.getAccuracy() << std::endl;
 }
+
+void MainWindow::moveRightClicked() {
+    currentPosition = localizer.movementUpdate(unitStepInMetres, movementAccuracyInPercentage);
+    invalidate();
+    std::cout << "current position mean: " << currentPosition.getPosition() << " accuracy: " << currentPosition.getAccuracy() << std::endl;
+}
+
 
 void MainWindow::invalidate() {
     if (plotData != nullptr) {
@@ -57,4 +70,5 @@ void MainWindow::invalidate() {
 MainWindow::~MainWindow() {
     delete plotData;
 }
+
 

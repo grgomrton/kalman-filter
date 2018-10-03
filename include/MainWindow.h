@@ -18,6 +18,8 @@ public:
 private:
     GaussianDistributionDescriptor currentPosition;
     Localizer localizer;
+    double unitStepInMetres;
+    double movementAccuracyInPercentage;
 
     std::vector<double> x_scale;
     Gtk::Grid layout;
@@ -25,8 +27,10 @@ private:
     Gtk::PLplot::PlotData2D* plotData;
     Gtk::PLplot::Plot2D plot;
     Gtk::Button moveLeftButton;
+    Gtk::Button moveRightButton;
 
     void moveLeftClicked();
+    void moveRightClicked();
     void invalidate();
 
 };

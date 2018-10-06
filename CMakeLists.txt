@@ -17,7 +17,9 @@ add_executable(Demo
         src/GaussianNoise.cpp
         include/GaussianNoise.h
         src/Localizer.cpp
-        include/Localizer.h)
+        include/Localizer.h
+        src/PlotFunctions.cpp
+        include/PlotFunctions.h)
 target_include_directories(Demo PRIVATE include ${GTKMM_INCLUDE_DIRS} ${GTKMMPLPLOT_INCLUDE_DIRS})
 target_link_libraries(Demo ${GTKMM_LIBRARIES} ${GTKMMPLPLOT_LIBRARIES})
 
@@ -31,8 +33,8 @@ add_executable(Tests
         src/GaussianNoise.cpp
         include/GaussianNoise.h
         test/GaussianNoiseTests.cpp
-        src/Plotter.cpp
-        include/Plotter.h
-        test/PlotterTests.cpp)
+        src/PlotFunctions.cpp
+        include/PlotFunctions.h
+        test/PlotFunctionsTests.cpp)
 target_include_directories(Tests PRIVATE include test/include)
 target_link_libraries(Tests)

@@ -1,20 +1,56 @@
-#include <cmath>
-#include "Plotter.h"
+#include <Plotter.h>
+#include <GaussianDistributionDescriptor.h>
+#include <gtkmm-plplot.h>
+#include <PlotFunctions.h>
 
-std::vector<double> Plotter::CreateUniformScale(double start, double end, unsigned int reference_point_count) {
-    std::vector<double> scale(reference_point_count);
-    double step = (end - start) / (double) (reference_point_count - 1);
-    for (int i = 0; i < reference_point_count; i++) {
-        scale[i] = start + i * step;
-    }
-    return scale;
+Plotter::Plotter(std::shared_ptr<Gtk::PLplot::Plot2D> plot, double scaleBegin, double scaleEnd,
+                 int referencePointCount) {
+    scale_ = PlotFunctions::CreateUniformScale(scaleBegin, scaleEnd, referencePointCount);
+    plot_ = plot;
+    plotData_ = nullptr;
+    measurementPlotData = nullptr;
 }
 
-std::vector<double> Plotter::PlotGaussian(double mean, double variance, const std::vector<double>& scale) {
-    auto fx = [](double x, double mean, double variance) { return 1 / (sqrt(variance)*sqrt(2*M_PI))*pow(M_E, -0.5*pow((x-mean)/sqrt(variance), 2)); }; // ugh
-    std::vector<double> y_values(scale.size());
-    for (int i=0; i<y_values.size(); i++) {
-        y_values[i] = fx(scale[i], mean, variance);
+void Plotter::AddBelief(GaussianDistributionDescriptor pose) {
+    if (plotData_ != nullptr) {
+        plot_->remove_data(*plotData_);
     }
-    return y_values;
+    delete plotData_;
+    plotData_ = nullptr;
+    if (measurementPlotData != nullptr) {
+        plot_->remove_data(*measurementPlotData);
+    }
+    delete measurementPlotData;
+    measurementPlotData = nullptr;
+
+    std::vector<double> y_values = PlotFunctions::PlotGaussian(pose.getPosition(), pose.getVariance(), scale_);
+    plotData_ = new Gtk::PLplot::PlotData2D(scale_, y_values, Gdk::RGBA("red"));
+    plot_->add_data(*plotData_);
+}
+
+void Plotter::AddMeasurement(GaussianDistributionDescriptor measurement) {
+    if (measurementPlotData != nullptr) {
+        plot_->remove_data(*measurementPlotData);
+    }
+    delete measurementPlotData;
+    measurementPlotData = nullptr;
+
+    std::vector<double> meas_y_values = PlotFunctions::PlotGaussian(measurement.getPosition(), measurement.getVariance(),
+                                                     scale_);
+    measurementPlotData = new Gtk::PLplot::PlotData2D(scale_, meas_y_values, Gdk::RGBA("blue"));
+    plot_->add_data(*measurementPlotData);
+}
+
+Plotter::~Plotter() {
+    if (plotData_ != nullptr) {
+        plot_->remove_data(*plotData_);
+    }
+    delete plotData_;
+    plotData_ = nullptr;
+
+    if (measurementPlotData != nullptr) {
+        plot_->remove_data(*measurementPlotData);
+    }
+    delete measurementPlotData;
+    measurementPlotData = nullptr;
 }

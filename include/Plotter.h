@@ -1,10 +1,38 @@
 #pragma once
 
 #include <vector>
+#include <memory>
+
+class GaussianDistributionDescriptor;
+
+namespace Gtk {
+    namespace PLplot {
+        class Plot2D;
+
+        class PlotData2D;
+    }
+}
 
 class Plotter {
 public:
-    static std::vector<double> CreateUniformScale(double start, double end, unsigned int reference_point_count);
 
-    static std::vector<double> PlotGaussian(double mean, double variance, const std::vector<double>& scale);
+    explicit Plotter(std::shared_ptr<Gtk::PLplot::Plot2D> plot, double scaleBegin, double scaleEnd,
+                     int referencePointCount);
+
+    Plotter(const Plotter& other) = delete;
+
+    Plotter& operator=(const Plotter& other) = delete;
+
+    void AddBelief(GaussianDistributionDescriptor pose);
+
+    void AddMeasurement(GaussianDistributionDescriptor measurement);
+
+    ~Plotter();
+
+private:
+    std::shared_ptr<Gtk::PLplot::Plot2D> plot_;
+    Gtk::PLplot::PlotData2D* plotData_;
+    Gtk::PLplot::PlotData2D* measurementPlotData;
+    std::vector<double> scale_;
+
 };

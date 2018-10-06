@@ -106,9 +106,18 @@ void MainWindow::invalidate() {
 }
 
 MainWindow::~MainWindow() {
+    if (plotData != nullptr) {
+        plot.remove_data(*plotData);
+    }
     delete plotData;
+    plotData = nullptr;
+    if (measurementPlotData != nullptr) {
+        plot.remove_data(*measurementPlotData);
+    }
     delete measurementPlotData;
+    measurementPlotData = nullptr;
     delete lastReceivedMeasurement;
+    lastReceivedMeasurement = nullptr;
 }
 
 

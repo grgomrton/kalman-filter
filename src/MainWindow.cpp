@@ -4,6 +4,7 @@
 #include <Localizer.h>
 #include <Plotter.h>
 #include <MainWindow.h>
+#include <PlotFunctions.h>
 
 MainWindow::MainWindow() :                                              // todo x_scale here!
         robotPositionInWorld(0.0),
@@ -14,7 +15,7 @@ MainWindow::MainWindow() :                                              // todo 
         layout(),
         canvas(),
         plot(std::make_shared<Gtk::PLplot::Plot2D>("x", "")),           // todo extract to consts
-        plotter(plot, -100, 100, 1000),                                 // todo to consts
+        plotter(plot, PlotFunctions::CreateUniformScale(-100, 100, 1000)),        // todo to consts
         moveLeftButton("Move left"),
         moveRightButton("Move right"),
         getGpsSignalButton("Measure position") {

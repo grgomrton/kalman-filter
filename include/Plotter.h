@@ -1,7 +1,11 @@
 #pragma once
 
+// includes
+
 #include <vector>
 #include <memory>
+
+// forward declarations
 
 class GaussianDistributionDescriptor;
 
@@ -13,15 +17,12 @@ namespace Gtk {
     }
 }
 
+// class declaration
+
 class Plotter {
 public:
 
-    explicit Plotter(std::shared_ptr<Gtk::PLplot::Plot2D> plot, double scaleBegin, double scaleEnd,
-                     int referencePointCount);
-
-    Plotter(const Plotter& other) = delete;
-
-    Plotter& operator=(const Plotter& other) = delete;
+    Plotter(std::shared_ptr<Gtk::PLplot::Plot2D> plot, std::vector<double> scale);
 
     void AddBelief(GaussianDistributionDescriptor pose);
 
@@ -29,10 +30,14 @@ public:
 
     ~Plotter();
 
+    Plotter(const Plotter& other) = delete; // TODO these are now automatically deleted, aren't they?
+
+    Plotter& operator=(const Plotter& other) = delete;
+
 private:
-    std::shared_ptr<Gtk::PLplot::Plot2D> plot_;
-    Gtk::PLplot::PlotData2D* plotData_;
-    Gtk::PLplot::PlotData2D* measurementPlotData;
     std::vector<double> scale_;
+    std::shared_ptr<Gtk::PLplot::Plot2D> plot_;
+    std::unique_ptr<Gtk::PLplot::PlotData2D> lastPosition_;
+    std::unique_ptr<Gtk::PLplot::PlotData2D> lastMeasurement_;
 
 };

@@ -4,9 +4,7 @@
 #include <gtkmm/grid.h>
 #include <gtkmm-plplot/canvas.h>
 #include <gtkmm/button.h>
-#include <Localizer.h>
-#include <gtkmm-plplot/plotdata2d.h>
-#include <gtkmm-plplot.h>
+#include "Localizer.h"
 #include "Plotter.h"
 
 class MainWindow : public Gtk::Window {

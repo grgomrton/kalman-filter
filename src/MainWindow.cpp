@@ -15,11 +15,11 @@ MainWindow::MainWindow() :                                              // todo 
         layout(),
         canvas(),
         plot(std::make_shared<Gtk::PLplot::Plot2D>("x", "")),           // todo extract to consts
-        plotter(plot, PlotFunctions::CreateUniformScale(-100, 100, 1000)),        // todo to consts
+        plotter(plot, PlotFunctions::CreateUniformScale(-50, 50, 1000)),        // todo to consts
         moveLeftButton("Move left"),
         moveRightButton("Move right"),
         getGpsSignalButton("Measure position") {
-    plotter.AddBelief(robotPositionInLocalizer);
+    plotter.add_estimation(robotPositionInLocalizer);
 
     auto label = Gtk::manage(new Gtk::Label("Current estimation: "));
     label->set_margin_bottom(10);
@@ -45,7 +45,7 @@ MainWindow::MainWindow() :                                              // todo 
 void MainWindow::moveLeftClicked() {
     robotPositionInWorld -= unitStepInMetres;
     robotPositionInLocalizer = localizer.movementUpdate(-unitStepInMetres, movementAccuracyInPercentage);
-    plotter.AddBelief(robotPositionInLocalizer);
+    plotter.add_estimation(robotPositionInLocalizer);
     std::cout << "current position mean: " << robotPositionInLocalizer.getPosition() << " error range: "
               << robotPositionInLocalizer.getAccuracy() << std::endl;
 }
@@ -53,7 +53,7 @@ void MainWindow::moveLeftClicked() {
 void MainWindow::moveRightClicked() {
     robotPositionInWorld += unitStepInMetres;
     robotPositionInLocalizer = localizer.movementUpdate(unitStepInMetres, movementAccuracyInPercentage);
-    plotter.AddBelief(robotPositionInLocalizer);
+    plotter.add_estimation(robotPositionInLocalizer);
     std::cout << "current position mean: " << robotPositionInLocalizer.getPosition() << " error range: "
               << robotPositionInLocalizer.getAccuracy() << std::endl;
 }
@@ -64,8 +64,8 @@ void MainWindow::getGpsSignalClicked() {
     auto measurement = GaussianDistributionDescriptor(
             GaussianDistributionDescriptor::makeFromAccuracy(measuredPosition, gpsAccuracyInMetres));
     robotPositionInLocalizer = localizer.measurementUpdate(measuredPosition, gpsAccuracyInMetres);
-    plotter.AddBelief(robotPositionInLocalizer);
-    plotter.AddMeasurement(measurement);
+    plotter.add_estimation(robotPositionInLocalizer);
+    plotter.add_measurement(measurement);
     std::cout << "current position mean: " << robotPositionInLocalizer.getPosition() << " error range: "
               << robotPositionInLocalizer.getAccuracy() << std::endl;
 }

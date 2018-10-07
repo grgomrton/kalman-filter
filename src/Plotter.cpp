@@ -4,31 +4,85 @@
 #include <gtkmm-plplot/plotdata2d.h>
 #include <PlotFunctions.h>
 
-Plotter::Plotter(std::shared_ptr<Gtk::PLplot::Plot2D> plot, std::vector<double> scale) {
-    mScale = std::move(scale);      // todo check pointers
-    mpPlot = std::move(plot);
+Plotter::Plotter(std::shared_ptr<Gtk::PLplot::Plot2D> plot_param, std::vector<double> x_scale_param) {
+    x_scale = std::move(x_scale_param);           // todo check pointers
+    plot = std::move(plot_param);
+    estimations.reserve(history_size + 1);
 }
 
-void Plotter::AddBelief(GaussianDistributionDescriptor pose) {
-    auto y_values = PlotFunctions::PlotGaussian(pose.getPosition(), pose.getVariance(), mScale);
+void Plotter::add_estimation(GaussianDistributionDescriptor estimation) {
+    auto y_values = PlotFunctions::PlotGaussian(estimation.getPosition(), estimation.getVariance(), x_scale);
+    if (estimations.size() == history_size + 1) {
+        plot->remove_data(*estimations.back());
+        estimations.pop_back();
+    }
+    estimations.insert(estimations.begin(), std::make_unique<Gtk::PLplot::PlotData2D>(x_scale, y_values));
+    plot->add_data(*estimations.front());
+    if (last_measurement) {
+        plot->remove_data(*last_measurement);
+    }
+    last_measurement.reset();
 
-    if (mpLastPosition) { mpPlot->remove_data(*mpLastPosition); }
-    mpLastPosition = std::make_unique<Gtk::PLplot::PlotData2D>(mScale, y_values, Gdk::RGBA("red"));
-    mpPlot->add_data(*mpLastPosition);
-
-    if (mpLastMeasurement) { mpPlot->remove_data(*mpLastMeasurement); }
-    mpLastMeasurement.reset();
+    recolour_curves();
+    update_curve_labels();
 }
 
-void Plotter::AddMeasurement(GaussianDistributionDescriptor measurement) {
-    auto y_values = PlotFunctions::PlotGaussian(measurement.getPosition(), measurement.getVariance(), mScale);
+void Plotter::add_measurement(GaussianDistributionDescriptor measurement) {
+    auto y_values = PlotFunctions::PlotGaussian(measurement.getPosition(), measurement.getVariance(), x_scale);
+    if (last_measurement) {
+        plot->remove_data(*last_measurement);
+    }
+    last_measurement = std::make_unique<Gtk::PLplot::PlotData2D>(x_scale, y_values);
+    plot->add_data(*last_measurement);
 
-    if (mpLastMeasurement) { mpPlot->remove_data(*mpLastMeasurement); }
-    mpLastMeasurement = std::make_unique<Gtk::PLplot::PlotData2D>(mScale, y_values, Gdk::RGBA("blue"));
-    mpPlot->add_data(*mpLastMeasurement);
+    recolour_curves();
+    update_curve_labels();
+}
+
+void Plotter::recolour_curves() {
+    auto history_index = 0;
+    auto shade_base = 0.0;
+    auto increment = 0.15;
+    auto color = Gdk::RGBA();
+    for (auto it = estimations.begin(); it != estimations.end(); it++) {
+        if (it == estimations.begin()) {
+            (*it)->set_color(Gdk::RGBA("red"));
+            (*it)->set_line_width(1.0);
+        } else {
+            history_index++;
+            color.set_grey(std::min(shade_base + history_index * increment, 1.0));
+            (*it)->set_color(color);
+            (*it)->set_line_width(0.5);
+        }
+    }
+    if (last_measurement) {
+        last_measurement->set_color(Gdk::RGBA("blue"));
+        last_measurement->set_line_width(1.0);
+    }
+}
+
+void Plotter::update_curve_labels() {
+    for (int i = 0; i < estimations.size(); i++) {
+        if (i == 0) {
+            estimations[i]->set_name("bel(t)");
+        } else {
+            std::string label;
+            label += "bel(t-";
+            label += std::to_string(i);
+            label += ")";
+            estimations[i]->set_name(label);
+        }
+    }
+    if (last_measurement) {
+        last_measurement->set_name("meas(t)");
+    }
 }
 
 Plotter::~Plotter() {
-    if (mpLastPosition) { mpPlot->remove_data(*mpLastPosition); }
-    if (mpLastMeasurement) { mpPlot->remove_data(*mpLastMeasurement); }
+    for (auto& position : estimations) {
+        plot->remove_data(*position);
+    }
+    if (last_measurement) {
+        plot->remove_data(*last_measurement);
+    }
 }

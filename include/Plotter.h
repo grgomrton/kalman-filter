@@ -5,7 +5,7 @@
 #include <vector>
 #include <memory>
 
-// forward declarations
+// predeclarations
 
 class GaussianDistributionDescriptor;
 
@@ -22,18 +22,23 @@ namespace Gtk {
 class Plotter {
 public:
 
-    Plotter(std::shared_ptr<Gtk::PLplot::Plot2D> plot, std::vector<double> scale);
+    Plotter(std::shared_ptr<Gtk::PLplot::Plot2D> plot_param, std::vector<double> x_scale_param);
 
-    void AddBelief(GaussianDistributionDescriptor pose);
+    void add_estimation(GaussianDistributionDescriptor estimation);
 
-    void AddMeasurement(GaussianDistributionDescriptor measurement);
+    void add_measurement(GaussianDistributionDescriptor measurement);
 
     ~Plotter();
 
 private:
-    std::vector<double> mScale;
-    std::shared_ptr<Gtk::PLplot::Plot2D> mpPlot;
-    std::unique_ptr<Gtk::PLplot::PlotData2D> mpLastPosition;
-    std::unique_ptr<Gtk::PLplot::PlotData2D> mpLastMeasurement;
+    static const int history_size = 5;
+    std::vector<double> x_scale;
+    std::shared_ptr<Gtk::PLplot::Plot2D> plot;
+    std::unique_ptr<Gtk::PLplot::PlotData2D> last_measurement;
+    std::vector<std::unique_ptr<Gtk::PLplot::PlotData2D>> estimations;
+
+    void recolour_curves();
+
+    void update_curve_labels();
 
 };

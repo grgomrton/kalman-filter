@@ -30,10 +30,6 @@ public:
 
     ~Plotter();
 
-    Plotter(const Plotter& other) = delete; // TODO these are now automatically deleted, aren't they?
-
-    Plotter& operator=(const Plotter& other) = delete;
-
 private:
     std::vector<double> mScale;
     std::shared_ptr<Gtk::PLplot::Plot2D> mpPlot;

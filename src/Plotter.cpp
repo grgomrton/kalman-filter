@@ -5,32 +5,32 @@
 #include <PlotFunctions.h>
 
 Plotter::Plotter(std::shared_ptr<Gtk::PLplot::Plot2D> plot, std::vector<double> scale) {    // todo check pointers
-    scale_ = std::move(scale);
-    plot_ = std::move(plot);
+    mScale = std::move(scale);
+    mpPlot = std::move(plot);
 }
 
 void Plotter::AddBelief(GaussianDistributionDescriptor pose) {
-    std::vector<double> y_values = PlotFunctions::PlotGaussian(pose.getPosition(), pose.getVariance(), scale_);
+    std::vector<double> y_values = PlotFunctions::PlotGaussian(pose.getPosition(), pose.getVariance(), mScale);
 
-    if (lastPosition_ != nullptr) { plot_->remove_data(*lastPosition_); }
-    lastPosition_ = std::make_unique<Gtk::PLplot::PlotData2D>(scale_, y_values, Gdk::RGBA("red"));
-    plot_->add_data(*lastPosition_);
+    if (mpLastPosition != nullptr) { mpPlot->remove_data(*mpLastPosition); }
+    mpLastPosition = std::make_unique<Gtk::PLplot::PlotData2D>(mScale, y_values, Gdk::RGBA("red"));
+    mpPlot->add_data(*mpLastPosition);
 
-    if (lastMeasurement_ != nullptr) { plot_->remove_data(*lastMeasurement_); }
-    lastMeasurement_.reset();
+    if (mpLastMeasurement != nullptr) { mpPlot->remove_data(*mpLastMeasurement); }
+    mpLastMeasurement.reset();
 }
 
 void Plotter::AddMeasurement(GaussianDistributionDescriptor measurement) {
     std::vector<double> y_values = PlotFunctions::PlotGaussian(measurement.getPosition(),
                                                                measurement.getVariance(),
-                                                               scale_);
+                                                               mScale);
 
-    if (lastMeasurement_ != nullptr) { plot_->remove_data(*lastMeasurement_); }
-    lastMeasurement_ = std::make_unique<Gtk::PLplot::PlotData2D>(scale_, y_values, Gdk::RGBA("blue"));
-    plot_->add_data(*lastMeasurement_);
+    if (mpLastMeasurement != nullptr) { mpPlot->remove_data(*mpLastMeasurement); }
+    mpLastMeasurement = std::make_unique<Gtk::PLplot::PlotData2D>(mScale, y_values, Gdk::RGBA("blue"));
+    mpPlot->add_data(*mpLastMeasurement);
 }
 
 Plotter::~Plotter() {
-    if (lastPosition_ != nullptr) { plot_->remove_data(*lastPosition_); }
-    if (lastMeasurement_ != nullptr) { plot_->remove_data(*lastMeasurement_); }
+    if (mpLastPosition != nullptr) { mpPlot->remove_data(*mpLastPosition); }
+    if (mpLastMeasurement != nullptr) { mpPlot->remove_data(*mpLastMeasurement); }
 }

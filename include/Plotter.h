@@ -35,9 +35,9 @@ public:
     Plotter& operator=(const Plotter& other) = delete;
 
 private:
-    std::vector<double> scale_;
-    std::shared_ptr<Gtk::PLplot::Plot2D> plot_;
-    std::unique_ptr<Gtk::PLplot::PlotData2D> lastPosition_;
-    std::unique_ptr<Gtk::PLplot::PlotData2D> lastMeasurement_;
+    std::vector<double> mScale;
+    std::shared_ptr<Gtk::PLplot::Plot2D> mpPlot;
+    std::unique_ptr<Gtk::PLplot::PlotData2D> mpLastPosition;
+    std::unique_ptr<Gtk::PLplot::PlotData2D> mpLastMeasurement;
 
 };

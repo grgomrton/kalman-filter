@@ -1,4 +1,4 @@
-#include "Gaussian_noise.h"
+#include <Gaussian_noise.h>
 
 const double Gaussian_noise::distribution_mean = 0.0;
 

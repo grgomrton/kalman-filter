@@ -8,8 +8,8 @@ pkg_check_modules(GTKMMPLPLOT gtkmm-plplot-2.0)
 
 add_executable(Demo
         src/Main.cpp
-        include/MainWindow.h
-        src/MainWindow.cpp
+        include/Main_window.h
+        src/Main_window.cpp
         src/Plotter.cpp
         include/Plotter.h
         src/Estimated_position.cpp
@@ -29,7 +29,7 @@ add_executable(Tests
         include/Localizer.h
         src/Estimated_position.cpp
         include/Estimated_position.h
-        test/LocalizerTests.cpp
+        test/Localizer_tests.cpp
         src/Gaussian_noise.cpp
         include/Gaussian_noise.h
         test/Gaussian_noise_tests.cpp

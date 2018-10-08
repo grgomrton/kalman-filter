@@ -1,19 +1,19 @@
 #pragma once
 
-#include "GaussianDistributionDescriptor.h"
+#include "Estimated_position.h"
 
 class Localizer {
 public:
-    explicit Localizer(GaussianDistributionDescriptor initialPosition);
+    explicit Localizer(Estimated_position initialPosition);
 
-    GaussianDistributionDescriptor movementUpdate(double distance, double accuracyInPercentage);
+    Estimated_position movementUpdate(double distance, double accuracyInPercentage);
 
-    GaussianDistributionDescriptor measurementUpdate(double measuredPosition, double absoluteAccuracy);
+    Estimated_position measurementUpdate(double measuredPosition, double absoluteAccuracy);
 
-    GaussianDistributionDescriptor getPosition();
+    Estimated_position getPosition();
 
 private:
-    GaussianDistributionDescriptor _position;
+    Estimated_position _position;
 
     static double calculateAbsoluteAccuracy(double distance, double accuracyInPercentage);
 

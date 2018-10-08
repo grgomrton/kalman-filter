@@ -4,18 +4,18 @@
 #include <Localizer.h>
 #include <Plotter.h>
 #include <MainWindow.h>
-#include <PlotFunctions.h>
+#include <Plot_functions.h>
 
 MainWindow::MainWindow() :                                              // todo x_scale here!
         robotPositionInWorld(0.0),
-        localizer(GaussianDistributionDescriptor::makeFromAccuracy(0.0, 2.0)),
+        localizer(Estimated_position::from_accuracy(0.0, 2.0)),
         robotPositionInLocalizer(localizer.getPosition()),
         unitStepInMetres(1.0),
         movementAccuracyInPercentage(30.0),
         layout(),
         canvas(),
         plot(std::make_shared<Gtk::PLplot::Plot2D>("x", "")),           // todo extract to consts
-        plotter(plot, PlotFunctions::CreateUniformScale(-50, 50, 1000)),        // todo to consts
+        plotter(plot, Plot_functions::create_uniform_scale(-50, 50, 1000)),        // todo to consts
         moveLeftButton("Move left"),
         moveRightButton("Move right"),
         getGpsSignalButton("Measure position") {
@@ -46,28 +46,28 @@ void MainWindow::moveLeftClicked() {
     robotPositionInWorld -= unitStepInMetres;
     robotPositionInLocalizer = localizer.movementUpdate(-unitStepInMetres, movementAccuracyInPercentage);
     plotter.add_estimation(robotPositionInLocalizer);
-    std::cout << "current position mean: " << robotPositionInLocalizer.getPosition() << " error range: "
-              << robotPositionInLocalizer.getAccuracy() << std::endl;
+    std::cout << "current position mean: " << robotPositionInLocalizer.get_position() << " error range: "
+              << robotPositionInLocalizer.get_accuracy() << std::endl;
 }
 
 void MainWindow::moveRightClicked() {
     robotPositionInWorld += unitStepInMetres;
     robotPositionInLocalizer = localizer.movementUpdate(unitStepInMetres, movementAccuracyInPercentage);
     plotter.add_estimation(robotPositionInLocalizer);
-    std::cout << "current position mean: " << robotPositionInLocalizer.getPosition() << " error range: "
-              << robotPositionInLocalizer.getAccuracy() << std::endl;
+    std::cout << "current position mean: " << robotPositionInLocalizer.get_position() << " error range: "
+              << robotPositionInLocalizer.get_accuracy() << std::endl;
 }
 
 void MainWindow::getGpsSignalClicked() {
     auto gpsAccuracyInMetres = 5.88;
     auto measuredPosition = robotPositionInWorld;                       // measurement without error
-    auto measurement = GaussianDistributionDescriptor(
-            GaussianDistributionDescriptor::makeFromAccuracy(measuredPosition, gpsAccuracyInMetres));
+    auto measurement = Estimated_position(
+            Estimated_position::from_accuracy(measuredPosition, gpsAccuracyInMetres));
     robotPositionInLocalizer = localizer.measurementUpdate(measuredPosition, gpsAccuracyInMetres);
     plotter.add_estimation(robotPositionInLocalizer);
     plotter.add_measurement(measurement);
-    std::cout << "current position mean: " << robotPositionInLocalizer.getPosition() << " error range: "
-              << robotPositionInLocalizer.getAccuracy() << std::endl;
+    std::cout << "current position mean: " << robotPositionInLocalizer.get_position() << " error range: "
+              << robotPositionInLocalizer.get_accuracy() << std::endl;
 }
 
 

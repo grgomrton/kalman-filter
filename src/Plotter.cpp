@@ -1,8 +1,8 @@
 #include <Plotter.h>
-#include <GaussianDistributionDescriptor.h>
+#include <Estimated_position.h>
 #include <gtkmm-plplot/plot2d.h>
 #include <gtkmm-plplot/plotdata2d.h>
-#include <PlotFunctions.h>
+#include <Plot_functions.h>
 
 Plotter::Plotter(std::shared_ptr<Gtk::PLplot::Plot2D> plot_param, std::vector<double> x_scale_param) {
     x_scale = std::move(x_scale_param);           // todo check pointers
@@ -10,8 +10,8 @@ Plotter::Plotter(std::shared_ptr<Gtk::PLplot::Plot2D> plot_param, std::vector<do
     estimations.reserve(history_size + 1);
 }
 
-void Plotter::add_estimation(GaussianDistributionDescriptor estimation) {
-    auto y_values = PlotFunctions::PlotGaussian(estimation.getPosition(), estimation.getVariance(), x_scale);
+void Plotter::add_estimation(Estimated_position estimation) {
+    auto y_values = Plot_functions::plot_gaussian(estimation.get_position(), estimation.get_variance(), x_scale);
     if (estimations.size() == history_size + 1) {
         plot->remove_data(*estimations.back());
         estimations.pop_back();
@@ -27,8 +27,8 @@ void Plotter::add_estimation(GaussianDistributionDescriptor estimation) {
     update_curve_labels();
 }
 
-void Plotter::add_measurement(GaussianDistributionDescriptor measurement) {
-    auto y_values = PlotFunctions::PlotGaussian(measurement.getPosition(), measurement.getVariance(), x_scale);
+void Plotter::add_measurement(Estimated_position measurement) {
+    auto y_values = Plot_functions::plot_gaussian(measurement.get_position(), measurement.get_variance(), x_scale);
     if (last_measurement) {
         plot->remove_data(*last_measurement);
     }

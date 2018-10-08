@@ -14,7 +14,7 @@ public:
 private:
     double robotPositionInWorld;
     Localizer localizer;
-    GaussianDistributionDescriptor robotPositionInLocalizer;
+    Estimated_position robotPositionInLocalizer;
     double unitStepInMetres;
     double movementAccuracyInPercentage;
 

@@ -12,14 +12,14 @@ add_executable(Demo
         src/MainWindow.cpp
         src/Plotter.cpp
         include/Plotter.h
-        src/GaussianDistributionDescriptor.cpp
-        include/GaussianDistributionDescriptor.h
+        src/Estimated_position.cpp
+        include/Estimated_position.h
         src/GaussianNoise.cpp
         include/GaussianNoise.h
         src/Localizer.cpp
         include/Localizer.h
-        src/PlotFunctions.cpp
-        include/PlotFunctions.h)
+        src/Plot_functions.cpp
+        include/Plot_functions.h)
 target_include_directories(Demo PRIVATE include ${GTKMM_INCLUDE_DIRS} ${GTKMMPLPLOT_INCLUDE_DIRS})
 target_link_libraries(Demo ${GTKMM_LIBRARIES} ${GTKMMPLPLOT_LIBRARIES})
 
@@ -27,14 +27,14 @@ add_executable(Tests
         test/Init.cpp
         src/Localizer.cpp
         include/Localizer.h
-        src/GaussianDistributionDescriptor.cpp
-        include/GaussianDistributionDescriptor.h
+        src/Estimated_position.cpp
+        include/Estimated_position.h
         test/LocalizerTests.cpp
         src/GaussianNoise.cpp
         include/GaussianNoise.h
         test/GaussianNoiseTests.cpp
-        src/PlotFunctions.cpp
-        include/PlotFunctions.h
-        test/PlotFunctionsTests.cpp)
+        src/Plot_functions.cpp
+        include/Plot_functions.h
+        test/Plot_functions_tests.cpp)
 target_include_directories(Tests PRIVATE include test/include)
 target_link_libraries(Tests)

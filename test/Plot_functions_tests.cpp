@@ -1,12 +1,12 @@
 #include <catch2/catch.hpp>
-#include "PlotFunctions.h"
+#include "Plot_functions.h"
 
 TEST_CASE("Uniform scale should be equally distributed between start and end inclusive") {
     auto start = 0.0;
     auto end = 20.0;
     auto itemCount = 11;
 
-    auto scale = PlotFunctions::CreateUniformScale(start, end, itemCount);
+    auto scale = Plot_functions::create_uniform_scale(start, end, itemCount);
 
     CHECK(scale.size() == itemCount);
     CHECK(scale.front() == Approx(start));
@@ -24,8 +24,8 @@ TEST_CASE("Gaussian plot should follow gaussian curve values") {
     auto eps = 0.01;
     auto itemCount = 21;
 
-    auto scale = PlotFunctions::CreateUniformScale(0.0, 20.0, itemCount);
-    auto plot = PlotFunctions::PlotGaussian(mean, variance, scale);
+    auto scale = Plot_functions::create_uniform_scale(0.0, 20.0, itemCount);
+    auto plot = Plot_functions::plot_gaussian(mean, variance, scale);
 
     CHECK(plot[10] == Approx(0.133).epsilon(eps));
     CHECK(plot[7] == Approx(0.08).epsilon(eps));

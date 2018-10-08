@@ -7,7 +7,7 @@
 
 // predeclarations
 
-class GaussianDistributionDescriptor;
+class Estimated_position;
 
 namespace Gtk {
     namespace PLplot {
@@ -24,9 +24,9 @@ public:
 
     Plotter(std::shared_ptr<Gtk::PLplot::Plot2D> plot_param, std::vector<double> x_scale_param);
 
-    void add_estimation(GaussianDistributionDescriptor estimation);
+    void add_estimation(Estimated_position estimation);
 
-    void add_measurement(GaussianDistributionDescriptor measurement);
+    void add_measurement(Estimated_position measurement);
 
     ~Plotter();
 

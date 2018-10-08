@@ -31,7 +31,7 @@ public:
     ~Plotter();
 
 private:
-    static const int history_size = 5;
+    static const unsigned long history_size;
     std::vector<double> x_scale;
     std::shared_ptr<Gtk::PLplot::Plot2D> plot;
     std::unique_ptr<Gtk::PLplot::PlotData2D> last_measurement;

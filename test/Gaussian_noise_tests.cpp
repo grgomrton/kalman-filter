@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include "GaussianNoise.h"
+#include "Gaussian_noise.h"
 
 TEST_CASE("Gaussian noise generator should have a mean at zero and should follow gaussian distribution", "[random-test]") {
     // Tested with a one-way table chi square test
@@ -18,10 +18,10 @@ TEST_CASE("Gaussian noise generator should have a mean at zero and should follow
     auto itemIsAboveOneStandardDeviationAboveMean = [=](double item) {
         return item >= expectedMean + standardDeviation;
     };
-    GaussianNoise noiseGenerator;
+    Gaussian_noise noiseGenerator;
 
     for (int i = 0; i < sampleSize; i++) {
-        values.push_back(noiseGenerator.getNoise(standardDeviation));
+        values.push_back(noiseGenerator.get_noise(standardDeviation));
     }
 
     auto itemCountBelowOneStandardDeviationBelowMean = std::count_if(values.begin(), values.end(), itemIsBelowOneStandardDeviationBelowMean);

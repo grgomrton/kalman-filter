@@ -4,6 +4,8 @@
 #include <gtkmm-plplot/plotdata2d.h>
 #include <Plot_functions.h>
 
+const unsigned long Plotter::history_size = 5;
+
 Plotter::Plotter(std::shared_ptr<Gtk::PLplot::Plot2D> plot_param, std::vector<double> x_scale_param) {
     x_scale = std::move(x_scale_param);           // todo check pointers
     plot = std::move(plot_param);

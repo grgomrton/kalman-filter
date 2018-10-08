@@ -14,8 +14,8 @@ add_executable(Demo
         include/Plotter.h
         src/Estimated_position.cpp
         include/Estimated_position.h
-        src/GaussianNoise.cpp
-        include/GaussianNoise.h
+        src/Gaussian_noise.cpp
+        include/Gaussian_noise.h
         src/Localizer.cpp
         include/Localizer.h
         src/Plot_functions.cpp
@@ -30,9 +30,9 @@ add_executable(Tests
         src/Estimated_position.cpp
         include/Estimated_position.h
         test/LocalizerTests.cpp
-        src/GaussianNoise.cpp
-        include/GaussianNoise.h
-        test/GaussianNoiseTests.cpp
+        src/Gaussian_noise.cpp
+        include/Gaussian_noise.h
+        test/Gaussian_noise_tests.cpp
         src/Plot_functions.cpp
         include/Plot_functions.h
         test/Plot_functions_tests.cpp)

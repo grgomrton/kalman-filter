@@ -7,15 +7,19 @@
 #include "Localizer.h"
 #include "Estimated_position.h"
 #include "Plotter.h"
+#include "Gaussian_noise.h"
 
 class Main_window : public Gtk::Window {
 public:
     Main_window();
 
 private:
+    static const double sensor_accuracy_in_metres;
+
     double robot_position_world;
     Localizer localizer;
     Estimated_position robot_position_localizer;
+    Gaussian_noise noise_generator;
     double unit_step_metres;
     double movement_accuracy_percentage;
 

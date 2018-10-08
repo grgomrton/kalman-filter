@@ -4,17 +4,17 @@
 
 class Localizer {
 public:
-    explicit Localizer(Estimated_position initialPosition);
+    explicit Localizer(Estimated_position initial_position);
 
-    Estimated_position movementUpdate(double distance, double accuracyInPercentage);
+    Estimated_position movement_executed(double distance, double accuracy_in_percentage);
 
-    Estimated_position measurementUpdate(double measuredPosition, double absoluteAccuracy);
+    Estimated_position measurement_received(double measured_position, double absolute_accuracy);
 
-    Estimated_position getPosition();
+    Estimated_position get_position();
 
 private:
-    Estimated_position _position;
+    Estimated_position current_estimation;
 
-    static double calculateAbsoluteAccuracy(double distance, double accuracyInPercentage);
+    static double calculate_absolute_accuracy(double distance, double accuracy_in_percentage);
 
 };

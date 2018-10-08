@@ -1,17 +1,17 @@
 #include <Estimated_position.h>
 #include <cmath>
 
-Estimated_position Estimated_position::from_accuracy(double position, double accuracy) { // todo test
-    return {position, accuracy_to_variance(accuracy)};
+Estimated_position Estimated_position::from_accuracy(double position, double estimation_accuracy) { // todo test
+    return {position, accuracy_to_variance(estimation_accuracy)};
 }
 
-Estimated_position Estimated_position::from_variance(double position, double variance) { // test
-    return {position, variance};
+Estimated_position Estimated_position::from_variance(double position, double estimation_variance) { // test
+    return {position, estimation_variance};
 }
 
 double Estimated_position::accuracy_to_variance(double accuracy) {
-    auto standardDeviation = accuracy / 2.0;
-    return pow(standardDeviation, 2.0);
+    auto standard_deviation = accuracy / 2.0;
+    return pow(standard_deviation, 2.0);
 }
 
 double Estimated_position::variance_to_accuracy(double variance) {

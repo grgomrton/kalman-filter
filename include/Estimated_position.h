@@ -8,9 +8,9 @@ public:
 
     double get_accuracy();
 
-    static Estimated_position from_accuracy(double position, double accuracy);
+    static Estimated_position from_accuracy(double position, double estimation_accuracy);
 
-    static Estimated_position from_variance(double position, double variance);
+    static Estimated_position from_variance(double position, double estimation_variance);
 
     static double accuracy_to_variance(double accuracy);
 

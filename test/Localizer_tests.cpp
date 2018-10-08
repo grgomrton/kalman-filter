@@ -8,7 +8,7 @@ TEST_CASE("After initialization the estimated position should be identical with 
             Estimated_position::from_accuracy(initialPositionInMetres, initialAccuracyInMetres);
 
     Localizer localizer(initial_position);
-    auto estimatedPosition = localizer.getPosition();
+    auto estimatedPosition = localizer.get_position();
 
     CHECK(estimatedPosition.get_position() == Approx(initialPositionInMetres));
     CHECK(estimatedPosition.get_accuracy() == Approx(initialAccuracyInMetres));
@@ -24,7 +24,7 @@ TEST_CASE("After a movement the mean should move to the endpoint of the command"
     double expectedPositionAfterMove = 6.0;
     Localizer localizer(initial_position);
 
-    auto estimated_position = localizer.movementUpdate(distanceInMetres, accuracyOfMoveCommandInPercentage);
+    auto estimated_position = localizer.movement_executed(distanceInMetres, accuracyOfMoveCommandInPercentage);
 
     CHECK(estimated_position.get_position() == Approx(expectedPositionAfterMove));
 }
@@ -38,7 +38,7 @@ TEST_CASE("After a movement the accuracy should be in a higher range") {
     double accuracyOfMoveCommandInPercentage = 8.0;
     Localizer localizer(initial_position);
 
-    auto new_position = localizer.movementUpdate(distanceInMetres, accuracyOfMoveCommandInPercentage);
+    auto new_position = localizer.movement_executed(distanceInMetres, accuracyOfMoveCommandInPercentage);
 
     CHECK(new_position.get_accuracy() > initialAccuracyInMetres);
 }
@@ -52,7 +52,7 @@ TEST_CASE("After a measurement the mean should move in between the original and 
     double accuracyOfMeasurementInMetres = 0.5;
     Localizer localizer(initial_position);
 
-    auto new_position = localizer.measurementUpdate(measuredPositionInMetres, accuracyOfMeasurementInMetres);
+    auto new_position = localizer.measurement_received(measuredPositionInMetres, accuracyOfMeasurementInMetres);
 
     CHECK(new_position.get_position() > initialPositionInMetres);
     CHECK(new_position.get_position() < measuredPositionInMetres);
@@ -67,7 +67,7 @@ TEST_CASE("After a measurement the accuracy should be in a smaller range") {
     double accuracyOfMeasurementInMetres = 0.5;
     Localizer localizer(initial_position);
 
-    auto new_position = localizer.measurementUpdate(measuredPositionInMetres, accuracyOfMeasurementInMetres);
+    auto new_position = localizer.measurement_received(measuredPositionInMetres, accuracyOfMeasurementInMetres);
 
     CHECK(new_position.get_accuracy() < initialAccuracyInMetres);
 }
@@ -87,7 +87,7 @@ TEST_CASE("After a close measurement the accuracy should be in smaller range tha
     double precisionForAccuracy = 0.05;
     Localizer localizer(initial_position);
 
-    auto new_position = localizer.measurementUpdate(measuredPositionInMetres, accuracyOfMeasurementInMetres);
+    auto new_position = localizer.measurement_received(measuredPositionInMetres, accuracyOfMeasurementInMetres);
 
     CHECK(new_position.get_position() == Approx(expectedMean).epsilon(precisionForPosition));
     CHECK(new_position.get_accuracy() == Approx(expectedAccuracy).epsilon(precisionForAccuracy));
@@ -110,8 +110,8 @@ TEST_CASE("After a measurement the move command should introduce uncertainty") {
     double precisionForAccuracy = 0.05;
     Localizer localizer(initial_position);
 
-    localizer.measurementUpdate(measuredPositionInMetres, accuracyOfMeasurementInMetres);
-    auto last_position = localizer.movementUpdate(distanceInMetres, accuracyOfMoveCommandInPercentage);
+    localizer.measurement_received(measuredPositionInMetres, accuracyOfMeasurementInMetres);
+    auto last_position = localizer.movement_executed(distanceInMetres, accuracyOfMoveCommandInPercentage);
 
     CHECK(last_position.get_position() == Approx(expectedMean).epsilon(precisionForPosition));
     CHECK(last_position.get_accuracy() == Approx(expectedAccuracy).epsilon(precisionForAccuracy));
@@ -131,8 +131,10 @@ TEST_CASE("The certainty after measurement update is independent of the distance
     Localizer localizerForCloseMeasurement(initial_position);
     Localizer localizerForDistantMeasurement(initial_position);
 
-    auto close_measurement_position = localizerForCloseMeasurement.measurementUpdate(measuredPositionOfCloseMeasurement, accuracyOfCloseMeasurement);
-    auto distant_measurement_position = localizerForDistantMeasurement.measurementUpdate(measuredPositionOfDistantMeasurement, accuracyOfDistantMeasurement);
+    auto close_measurement_position = localizerForCloseMeasurement.measurement_received(
+            measuredPositionOfCloseMeasurement, accuracyOfCloseMeasurement);
+    auto distant_measurement_position = localizerForDistantMeasurement.measurement_received(
+            measuredPositionOfDistantMeasurement, accuracyOfDistantMeasurement);
 
     CHECK(close_measurement_position.get_accuracy() == Approx(distant_measurement_position.get_accuracy()).epsilon(precision));
     CHECK(close_measurement_position.get_accuracy() > magnitudeOfComparisonPrecision);

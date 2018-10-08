@@ -1,38 +1,39 @@
 #include <Localizer.h>
 
-Localizer::Localizer(Estimated_position initialPosition) : _position(initialPosition) {
-
+Localizer::Localizer(Estimated_position initial_position)
+        : current_estimation(initial_position) {
 }
 
-Estimated_position Localizer::movementUpdate(double distance, double accuracyInPercentage) {
-    double error_cov = Estimated_position::accuracy_to_variance(calculateAbsoluteAccuracy(distance, accuracyInPercentage));
-    double prev_mean = _position.get_position();
-    double prev_cov = _position.get_variance();
+Estimated_position Localizer::movement_executed(double distance, double accuracy_in_percentage) {
+    double error_cov = Estimated_position::accuracy_to_variance(
+            calculate_absolute_accuracy(distance, accuracy_in_percentage));
 
+    double prev_mean = current_estimation.get_position();
+    double prev_cov = current_estimation.get_variance();
     double new_mean = prev_mean + distance;
     double new_cov = prev_cov + error_cov;
+    current_estimation = Estimated_position::from_variance(new_mean, new_cov);
 
-    _position = Estimated_position::from_variance(new_mean, new_cov);
-    return _position;
+    return current_estimation;
 }
 
-Estimated_position Localizer::measurementUpdate(double measuredPosition, double absoluteAccuracy) {
-    double error_cov = Estimated_position::accuracy_to_variance(absoluteAccuracy);
-    double prev_mean = _position.get_position();
-    double prev_cov = _position.get_variance();
+Estimated_position Localizer::measurement_received(double measured_position, double absolute_accuracy) {
+    double error_cov = Estimated_position::accuracy_to_variance(absolute_accuracy);
+    double prev_mean = current_estimation.get_position();
+    double prev_cov = current_estimation.get_variance();
 
     double gain = prev_cov / (prev_cov + error_cov);
-    double new_mean = prev_mean + gain * (measuredPosition - prev_mean);
+    double new_mean = prev_mean + gain * (measured_position - prev_mean);
     double new_cov = (1 - gain) * prev_cov;
 
-    _position = Estimated_position::from_variance(new_mean, new_cov);
-    return _position;
+    current_estimation = Estimated_position::from_variance(new_mean, new_cov);
+    return current_estimation;
 }
 
-Estimated_position Localizer::getPosition() {
-    return _position;
+Estimated_position Localizer::get_position() {
+    return current_estimation;
 }
 
-double Localizer::calculateAbsoluteAccuracy(double distance, double accuracyInPercentage) {
-    return distance * (accuracyInPercentage / 100.0);
+double Localizer::calculate_absolute_accuracy(double distance, double accuracy_in_percentage) {
+    return distance * (accuracy_in_percentage / 100.0);
 }

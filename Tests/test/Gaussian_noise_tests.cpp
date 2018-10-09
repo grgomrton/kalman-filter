@@ -2,12 +2,12 @@
 #include "Gaussian_noise.h"
 
 // Tested with a one-way table chi square test
-static void check_follows_gaussian(const std::vector<double>& items, double expected_mean, double expected_standard_deviation) {
+static void check_follows_gaussian(const std::vector<double>& items, double expected_mean, double standard_deviation) {
     double chi_square_higher_bound = 7.81473;
 
-    double higher_bound_bucket_1 = -expected_standard_deviation;
+    double higher_bound_bucket_1 = expected_mean - standard_deviation;
     double higher_bound_bucket_2 = expected_mean;
-    double higher_bound_bucket_3 = +expected_standard_deviation;
+    double higher_bound_bucket_3 = expected_mean + standard_deviation;
 
     double expected_bucket_1_size = items.size() * 0.159;
     double expected_bucket_2_size = items.size() * 0.341;

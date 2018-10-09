@@ -6,7 +6,7 @@ class Localizer {
 public:
     explicit Localizer(Estimated_position initial_position);
 
-    Estimated_position movement_executed(double distance, double accuracy_in_percentage);
+    Estimated_position movement_executed(double distance, double absolute_accuracy);
 
     Estimated_position measurement_received(double measured_position, double absolute_accuracy);
 

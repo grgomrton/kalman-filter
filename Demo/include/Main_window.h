@@ -8,20 +8,18 @@
 #include "Estimated_position.h"
 #include "Plotter.h"
 #include "Gaussian_noise.h"
+#include "Sensor.h"
+#include "Robot.h"
 
 class Main_window : public Gtk::Window {
 public:
     Main_window();
 
 private:
-    static const double sensor_accuracy_in_metres;
-
-    double robot_position_world;
     Localizer localizer;
-    Estimated_position robot_position_localizer;
-    Gaussian_noise noise_generator;
+    Sensor sensor;
+    Robot robot;
     double unit_step_metres;
-    double movement_accuracy_percentage;
 
     Gtk::Grid layout;
     Gtk::PLplot::Canvas canvas;
@@ -36,5 +34,7 @@ private:
     void on_move_right_clicked();
 
     void on_measure_position_clicked();
+
+    void debug_error_between_actual_and_estimated_position();
 
 };

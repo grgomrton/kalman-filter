@@ -35,10 +35,10 @@ TEST_CASE("After a movement the accuracy should be in a higher range") {
     Estimated_position initial_position =
             Estimated_position::from_accuracy(initialPositionInMetres, initialAccuracyInMetres);
     double distanceInMetres = 1.0;
-    double accuracyOfMoveCommandInPercentage = 8.0;
+    double accuracyOfMoveCommandInMetres = 0.08;
     Localizer localizer(initial_position);
 
-    auto new_position = localizer.movement_executed(distanceInMetres, accuracyOfMoveCommandInPercentage);
+    auto new_position = localizer.movement_executed(distanceInMetres, accuracyOfMoveCommandInMetres);
 
     CHECK(new_position.get_accuracy() > initialAccuracyInMetres);
 }
@@ -103,7 +103,7 @@ TEST_CASE("After a measurement the move command should introduce uncertainty") {
     double measuredPositionInMetres = 6.0;
     double accuracyOfMeasurementInMetres = 4.0;
     double distanceInMetres = 15.0;
-    double accuracyOfMoveCommandInPercentage = 40.0;
+    double accuracyOfMoveCommandInMetres = 6;
     double expectedMean = 21.5;
     double expectedAccuracy = 7.0;
     double precisionForPosition = 0.1;
@@ -111,7 +111,7 @@ TEST_CASE("After a measurement the move command should introduce uncertainty") {
     Localizer localizer(initial_position);
 
     localizer.measurement_received(measuredPositionInMetres, accuracyOfMeasurementInMetres);
-    auto last_position = localizer.movement_executed(distanceInMetres, accuracyOfMoveCommandInPercentage);
+    auto last_position = localizer.movement_executed(distanceInMetres, accuracyOfMoveCommandInMetres);
 
     CHECK(last_position.get_position() == Approx(expectedMean).epsilon(precisionForPosition));
     CHECK(last_position.get_accuracy() == Approx(expectedAccuracy).epsilon(precisionForAccuracy));

@@ -13,7 +13,7 @@ add_library(
         include/Localizer.h
         src/Plot_functions.cpp
         include/Plot_functions.h
-)
+        src/Sensor.cpp include/Sensor.h src/Robot.cpp include/Robot.h)
 target_include_directories(KalmanFilterLibrary PUBLIC include)
 
 add_executable(

@@ -4,16 +4,15 @@ Localizer::Localizer(Estimated_position initial_position)
         : current_estimation(initial_position) {
 }
 
-Estimated_position Localizer::movement_executed(double distance, double accuracy_in_percentage) {
-    double error_cov = Estimated_position::accuracy_to_variance(
-            calculate_absolute_accuracy(distance, accuracy_in_percentage));
-
+Estimated_position Localizer::movement_executed(double distance, double absolute_accuracy) {
+    double error_cov = Estimated_position::accuracy_to_variance(absolute_accuracy);
     double prev_mean = current_estimation.get_position();
     double prev_cov = current_estimation.get_variance();
+
     double new_mean = prev_mean + distance;
     double new_cov = prev_cov + error_cov;
-    current_estimation = Estimated_position::from_variance(new_mean, new_cov);
 
+    current_estimation = Estimated_position::from_variance(new_mean, new_cov);
     return current_estimation;
 }
 
@@ -32,8 +31,4 @@ Estimated_position Localizer::measurement_received(double measured_position, dou
 
 Estimated_position Localizer::get_position() {
     return current_estimation;
-}
-
-double Localizer::calculate_absolute_accuracy(double distance, double accuracy_in_percentage) {
-    return distance * (accuracy_in_percentage / 100.0);
 }

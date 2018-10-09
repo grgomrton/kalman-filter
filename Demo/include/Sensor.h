@@ -2,14 +2,16 @@
 
 #include <Gaussian_noise.h>
 
+class Estimated_position;
+
 class Sensor {
 public:
     explicit Sensor();
-    double get_noisy_measurement(double position);
-    double get_accuracy();
+    Estimated_position get_noisy_measurement(double position);
+    double get_error_range();
 
 private:
-    static const double sensor_accuracy_in_metres;
+    static const double error_range_in_metres;
     double noise_standard_deviation;
     Gaussian_noise noise_generator;
 };

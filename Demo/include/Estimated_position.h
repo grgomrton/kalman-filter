@@ -6,15 +6,15 @@ public:
 
     double get_variance();
 
-    double get_accuracy();
+    double get_error_range();
 
-    static Estimated_position from_accuracy(double position, double estimation_accuracy);
+    static Estimated_position from_error_range(double position, double estimation_error_range);
 
     static Estimated_position from_variance(double position, double estimation_variance);
 
-    static double accuracy_to_variance(double accuracy);
+    static double error_range_to_variance(double error_range);
 
-    static double variance_to_accuracy(double variance);
+    static double variance_to_error_range(double variance);
 
 private:
     Estimated_position(double position_param, double variance_param);

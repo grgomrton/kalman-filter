@@ -16,9 +16,9 @@ public:
     Main_window();
 
 private:
-    Localizer localizer;
-    Sensor sensor;
     Robot robot;
+    Sensor sensor;
+    Localizer localizer;
     double unit_step_metres;
 
     Gtk::Grid layout;
@@ -35,6 +35,6 @@ private:
 
     void on_measure_position_clicked();
 
-    void debug_error_between_actual_and_estimated_position();
+    void print_error_between_actual_and_estimated_position();
 
 };

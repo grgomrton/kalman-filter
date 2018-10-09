@@ -5,7 +5,7 @@
 #include <vector>
 #include <memory>
 
-// predeclarations
+// forward declarations
 
 class Estimated_position;
 
@@ -26,7 +26,7 @@ public:
 
     void add_estimation(Estimated_position estimation);
 
-    void add_measurement(Estimated_position measurement);
+    void add_estimation_after_measurement(Estimated_position estimation, Estimated_position measurement);
 
     ~Plotter();
 
@@ -37,8 +37,6 @@ private:
     std::unique_ptr<Gtk::PLplot::PlotData2D> last_measurement;
     std::vector<std::unique_ptr<Gtk::PLplot::PlotData2D>> estimations;
 
-    void recolour_curves();
-
-    void update_curve_labels();
+    void update_curve_appearance();
 
 };

@@ -5,20 +5,20 @@ TEST_CASE("After initialization the estimated position should be identical with 
     double initialPositionInMetres = 5.0;
     double initialAccuracyInMetres = 0.05;
     Estimated_position initial_position =
-            Estimated_position::from_accuracy(initialPositionInMetres, initialAccuracyInMetres);
+            Estimated_position::from_error_range(initialPositionInMetres, initialAccuracyInMetres);
 
     Localizer localizer(initial_position);
     auto estimatedPosition = localizer.get_position();
 
     CHECK(estimatedPosition.get_position() == Approx(initialPositionInMetres));
-    CHECK(estimatedPosition.get_accuracy() == Approx(initialAccuracyInMetres));
+    CHECK(estimatedPosition.get_error_range() == Approx(initialAccuracyInMetres));
 }
 
 TEST_CASE("After a movement the mean should move to the endpoint of the command") {
     double initialPositionInMetres = 5.0;
     double initialAccuracyInMetres = 0.05;
     Estimated_position initial_position =
-            Estimated_position::from_accuracy(initialPositionInMetres, initialAccuracyInMetres);
+            Estimated_position::from_error_range(initialPositionInMetres, initialAccuracyInMetres);
     double distanceInMetres = 1.0;
     double accuracyOfMoveCommandInPercentage = 8.0;
     double expectedPositionAfterMove = 6.0;
@@ -33,21 +33,21 @@ TEST_CASE("After a movement the accuracy should be in a higher range") {
     double initialPositionInMetres = 5.0;
     double initialAccuracyInMetres = 0.05;
     Estimated_position initial_position =
-            Estimated_position::from_accuracy(initialPositionInMetres, initialAccuracyInMetres);
+            Estimated_position::from_error_range(initialPositionInMetres, initialAccuracyInMetres);
     double distanceInMetres = 1.0;
     double accuracyOfMoveCommandInMetres = 0.08;
     Localizer localizer(initial_position);
 
     auto new_position = localizer.movement_executed(distanceInMetres, accuracyOfMoveCommandInMetres);
 
-    CHECK(new_position.get_accuracy() > initialAccuracyInMetres);
+    CHECK(new_position.get_error_range() > initialAccuracyInMetres);
 }
 
 TEST_CASE("After a measurement the mean should move in between the original and the measured one") {
     double initialPositionInMetres = 3.0;
     double initialAccuracyInMetres = 0.5;
     Estimated_position initial_position =
-            Estimated_position::from_accuracy(initialPositionInMetres, initialAccuracyInMetres);
+            Estimated_position::from_error_range(initialPositionInMetres, initialAccuracyInMetres);
     double measuredPositionInMetres = 3.3;
     double accuracyOfMeasurementInMetres = 0.5;
     Localizer localizer(initial_position);
@@ -62,14 +62,14 @@ TEST_CASE("After a measurement the accuracy should be in a smaller range") {
     double initialPositionInMetres = 3.0;
     double initialAccuracyInMetres = 0.5;
     Estimated_position initial_position =
-            Estimated_position::from_accuracy(initialPositionInMetres, initialAccuracyInMetres);
+            Estimated_position::from_error_range(initialPositionInMetres, initialAccuracyInMetres);
     double measuredPositionInMetres = 3.3;
     double accuracyOfMeasurementInMetres = 0.5;
     Localizer localizer(initial_position);
 
     auto new_position = localizer.measurement_received(measuredPositionInMetres, accuracyOfMeasurementInMetres);
 
-    CHECK(new_position.get_accuracy() < initialAccuracyInMetres);
+    CHECK(new_position.get_error_range() < initialAccuracyInMetres);
 }
 
 TEST_CASE("After a close measurement the accuracy should be in smaller range than both the initial and the measured one") {
@@ -78,7 +78,7 @@ TEST_CASE("After a close measurement the accuracy should be in smaller range tha
     double initialPositionInMetres = 8.0;
     double initialAccuracyInMetres = 8.0;
     Estimated_position initial_position =
-            Estimated_position::from_accuracy(initialPositionInMetres, initialAccuracyInMetres);
+            Estimated_position::from_error_range(initialPositionInMetres, initialAccuracyInMetres);
     double measuredPositionInMetres = 6.0;
     double accuracyOfMeasurementInMetres = 4.0;
     double expectedMean = 6.5;
@@ -90,7 +90,7 @@ TEST_CASE("After a close measurement the accuracy should be in smaller range tha
     auto new_position = localizer.measurement_received(measuredPositionInMetres, accuracyOfMeasurementInMetres);
 
     CHECK(new_position.get_position() == Approx(expectedMean).epsilon(precisionForPosition));
-    CHECK(new_position.get_accuracy() == Approx(expectedAccuracy).epsilon(precisionForAccuracy));
+    CHECK(new_position.get_error_range() == Approx(expectedAccuracy).epsilon(precisionForAccuracy));
 }
 
 TEST_CASE("After a measurement the move command should introduce uncertainty") {
@@ -99,7 +99,7 @@ TEST_CASE("After a measurement the move command should introduce uncertainty") {
     double initialPositionInMetres = 8.0;
     double initialAccuracyInMetres = 8.0;
     Estimated_position initial_position =
-            Estimated_position::from_accuracy(initialPositionInMetres, initialAccuracyInMetres);
+            Estimated_position::from_error_range(initialPositionInMetres, initialAccuracyInMetres);
     double measuredPositionInMetres = 6.0;
     double accuracyOfMeasurementInMetres = 4.0;
     double distanceInMetres = 15.0;
@@ -114,14 +114,14 @@ TEST_CASE("After a measurement the move command should introduce uncertainty") {
     auto last_position = localizer.movement_executed(distanceInMetres, accuracyOfMoveCommandInMetres);
 
     CHECK(last_position.get_position() == Approx(expectedMean).epsilon(precisionForPosition));
-    CHECK(last_position.get_accuracy() == Approx(expectedAccuracy).epsilon(precisionForAccuracy));
+    CHECK(last_position.get_error_range() == Approx(expectedAccuracy).epsilon(precisionForAccuracy));
 }
 
 TEST_CASE("The certainty after measurement update is independent of the distance") {
     double initialPosition = 3.0;
     double initialAccuracy = 0.5;
     Estimated_position initial_position =
-            Estimated_position::from_accuracy(initialPosition, initialAccuracy);
+            Estimated_position::from_error_range(initialPosition, initialAccuracy);
     double measuredPositionOfCloseMeasurement = 3.3;
     double accuracyOfCloseMeasurement = 0.5;
     double measuredPositionOfDistantMeasurement = 5.3;
@@ -136,7 +136,7 @@ TEST_CASE("The certainty after measurement update is independent of the distance
     auto distant_measurement_position = localizerForDistantMeasurement.measurement_received(
             measuredPositionOfDistantMeasurement, accuracyOfDistantMeasurement);
 
-    CHECK(close_measurement_position.get_accuracy() == Approx(distant_measurement_position.get_accuracy()).epsilon(precision));
-    CHECK(close_measurement_position.get_accuracy() > magnitudeOfComparisonPrecision);
-    CHECK(distant_measurement_position.get_accuracy() > magnitudeOfComparisonPrecision);
+    CHECK(close_measurement_position.get_error_range() == Approx(distant_measurement_position.get_error_range()).epsilon(precision));
+    CHECK(close_measurement_position.get_error_range() > magnitudeOfComparisonPrecision);
+    CHECK(distant_measurement_position.get_error_range() > magnitudeOfComparisonPrecision);
 }

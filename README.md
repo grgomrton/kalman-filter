@@ -2,7 +2,7 @@
 
 A demo application for the one-dimensional case of the _Kalman filter_ algorithm.
 
-<p align="center"><img src="screenshot-with-measurement.png" alt="Plot with a measurement and the current estimation" /></p>
+<p align="center"><img src="screenshot_full-window.png" alt="Plot with measurement and the current estimation, below them the estimation error history" /></p>
 
 ### Test execution
 

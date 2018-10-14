@@ -16,6 +16,10 @@ public:
     Main_window();
 
 private:
+    static const double estimation_plot_height_norm;
+    static const double error_plot_height_norm;
+    static const double error_plot_offset_norm;
+
     Robot robot;
     Sensor sensor;
     Localizer localizer;
@@ -23,7 +27,8 @@ private:
 
     Gtk::Grid layout;
     Gtk::PLplot::Canvas canvas;
-    std::shared_ptr<Gtk::PLplot::Plot2D> plot;
+    std::shared_ptr<Gtk::PLplot::Plot2D> estimation_plot;
+    std::shared_ptr<Gtk::PLplot::Plot2D> error_plot;
     Plotter plotter;
     Gtk::Button move_left_button;
     Gtk::Button move_right_button;
@@ -34,7 +39,5 @@ private:
     void on_move_right_clicked();
 
     void on_measure_position_clicked();
-
-    void print_error_between_actual_and_estimated_position();
 
 };

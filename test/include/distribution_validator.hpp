@@ -3,7 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
-#include <catch2/catch.hpp>
+#include "catch2/catch.hpp"
 
 class distribution_validator {
 public:

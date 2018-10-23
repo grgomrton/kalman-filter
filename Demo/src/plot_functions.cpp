@@ -1,8 +1,8 @@
-#include <Plot_functions.h>
+#include <plot_functions.h>
 #include <cmath>
 
 std::vector<double>
-Plot_functions::create_uniform_scale(double start, double end, unsigned int reference_point_count) { // todo exceptions
+plot_functions::create_uniform_scale(double start, double end, unsigned int reference_point_count) { // todo exceptions
     std::vector<double> scale(reference_point_count);
     double step = (end - start) / (double) (reference_point_count - 1);
     for (int i = 0; i < reference_point_count; i++) {
@@ -11,7 +11,7 @@ Plot_functions::create_uniform_scale(double start, double end, unsigned int refe
     return scale;
 }
 
-std::vector<double> Plot_functions::plot_gaussian(double mean, double variance, const std::vector<double>& scale) {
+std::vector<double> plot_functions::plot_gaussian(double mean, double variance, const std::vector<double>& scale) {
     auto fx = [](double x, double mean, double variance) {
         return 1 / (sqrt(variance) * sqrt(2 * M_PI)) * pow(M_E, -0.5 * pow((x - mean) / sqrt(variance), 2)); // ugh
     };

@@ -2,7 +2,7 @@
 
 #include <vector>
 
-class Plot_functions {
+class plot_functions {
 public:
     static std::vector<double> create_uniform_scale(double start, double end, unsigned int reference_point_count);
 

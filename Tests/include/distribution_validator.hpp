@@ -5,7 +5,7 @@
 #include <cmath>
 #include <catch2/catch.hpp>
 
-class Distribution_tester {
+class distribution_validator {
 public:
     static void check_follows_gaussian(const std::vector<double>& items, double expected_mean, double standard_deviation) {
         // Tested with a one-way table chi square test
@@ -31,12 +31,12 @@ public:
         auto bucket_4_size = std::count_if(begin(items), end(items), in_bucket_4);
 
         auto squared_error = [](double measured, double expected) { return pow(measured - expected, 2.0) / expected; };
-        double measured_chi_square = 0.0;
-        measured_chi_square += squared_error(bucket_1_size, expected_bucket_1_size);
-        measured_chi_square += squared_error(bucket_2_size, expected_bucket_2_size);
-        measured_chi_square += squared_error(bucket_3_size, expected_bucket_3_size);
-        measured_chi_square += squared_error(bucket_4_size, expected_bucket_4_size);
+        double chi_square_value = 0.0;
+        chi_square_value += squared_error(bucket_1_size, expected_bucket_1_size);
+        chi_square_value += squared_error(bucket_2_size, expected_bucket_2_size);
+        chi_square_value += squared_error(bucket_3_size, expected_bucket_3_size);
+        chi_square_value += squared_error(bucket_4_size, expected_bucket_4_size);
 
-        CHECK(measured_chi_square < chi_square_higher_bound);
+        CHECK(chi_square_value < chi_square_higher_bound);
     }
 };

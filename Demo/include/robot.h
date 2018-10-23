@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Gaussian_noise.h"
+#include "gaussian_noise.h"
 
-class Robot {
+class robot {
 public:
-    Robot();
+    robot();
 
     double move(double distance);
 
@@ -13,8 +13,8 @@ public:
     double get_error_range_of_move_command(double distance);
 
 private:
-    double position_in_world;
-    double movement_accuracy_in_percentage;
-    Gaussian_noise noise_generator;
+    double position_in_world_;
+    double movement_accuracy_in_percentage_;
+    gaussian_noise noise_generator_;
 
 };

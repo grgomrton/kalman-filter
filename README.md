@@ -2,7 +2,7 @@
 
 A demo application for the one-dimensional case of the _Kalman filter_ algorithm.
 
-<p align="center"><img src="screenshot_full-window.png" alt="Plot with measurement and the current estimation, below them the estimation error history" /></p>
+<p align="center"><img src="screenshot.png" alt="Plot with measurement and the current estimation, below them the estimation error history" /></p>
 
 ### Test execution
 
@@ -20,4 +20,4 @@ To install gtkmm on linux try this:
 
 If it does not work, check out the _Installation_ section of the gtkmm documentation.
 
-In order to install Gtkmm-PLplot, follow the _Installation instructions_ section of it's documentation. It has packages for various linux distributions.
+Gtkmm-PLplot has packages for various linux distributions.
